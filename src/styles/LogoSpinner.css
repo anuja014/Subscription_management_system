@@ -1,0 +1,74 @@
+/* src/styles/LogoSpinner.css */
+
+@keyframes logo-ring-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes logo-pulse {
+  0%, 100% { opacity: 1;   transform: scale(1);    }
+  50%       { opacity: .75; transform: scale(.92);  }
+}
+
+.logo-spinner-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 48px 24px;
+}
+
+/* The rotating ring – drawn with a CSS conic-gradient border */
+.logo-spinner-ring {
+  position: relative;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  /* Gradient ring via background + mask */
+  background: conic-gradient(
+    from 0deg,
+    var(--brand, #FF9800) 0%,
+    var(--accent, #FB8C00) 40%,
+    transparent 60%
+  );
+  animation: logo-ring-spin 1.1s linear infinite;
+
+  /* Inner "hole" to expose logo */
+  mask-image: radial-gradient(
+    circle at center,
+    transparent 52%,
+    white 52%
+  );
+  -webkit-mask-image: radial-gradient(
+    circle at center,
+    transparent 52%,
+    white 52%
+  );
+}
+
+/* Logo sits on top of ring, inside the hole */
+.logo-spinner-img {
+  position: absolute;
+  border-radius: 50%;
+  object-fit: cover;
+  animation: logo-pulse 1.8s ease-in-out infinite;
+  /* counter-rotate so logo stays upright */
+  animation-name: logo-pulse, logo-ring-counter;
+}
+
+@keyframes logo-ring-counter {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+
+.logo-spinner-label {
+  color: var(--text-muted, #666);
+  font-family: var(--font-sans, sans-serif);
+  letter-spacing: .04em;
+  font-weight: 500;
+  animation: logo-pulse 1.8s ease-in-out infinite;
+}

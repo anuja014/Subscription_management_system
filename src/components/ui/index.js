@@ -20,5 +20,6 @@ export { StatCard } from './StatCard';
 export { Toast, ToastContainer } from './Toast';
 export { EmptyState } from './EmptyState';
 export { Skeleton } from './Skeleton';
+export { LogoSpinner } from './LogoSpinner';
 export { MoneyText } from './MoneyText';
 export { DateText } from './DateText';

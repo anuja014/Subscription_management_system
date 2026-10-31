@@ -1,6 +1,7 @@
 // src/components/ui/DataTable.jsx
 import { useState } from 'react';
 import { Button } from './Button';
+import { LogoSpinner } from './LogoSpinner';
 
 export function DataTable({ columns, data, loading = false, emptyMessage = 'No records found', pageSize = 20, className }) {
   const [page, setPage] = useState(1);
@@ -22,10 +23,7 @@ export function DataTable({ columns, data, loading = false, emptyMessage = 'No r
   if (loading) {
     return (
       <div className={`table-wrap ${className || ''}`}>
-        <div className="empty-state">
-          <div className="skeleton" style={{ height: 120, width: '60%', margin: '0 auto' }} />
-          <div className="skeleton" style={{ height: 20, width: '80%', margin: '20px auto' }} />
-        </div>
+        <LogoSpinner size="lg" label="Loading…" />
       </div>
     );
   }

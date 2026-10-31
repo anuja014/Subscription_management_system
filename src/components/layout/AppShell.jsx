@@ -12,7 +12,6 @@ export default function AppShell({ children }) {
   return (
     <div className="app-shell">
       <Sidebar open={sidebarOpen} onToggle={setSidebarOpen} />
-      <div className={`sidebar-overlay ${sidebarOpen ? 'open' : ''}`} onClick={() => setSidebarOpen(false)} />
       <div className="main-content">
         <Topbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} signOut={signOut} profile={profile} />
         <div className="page">{children || <Outlet />}</div>
