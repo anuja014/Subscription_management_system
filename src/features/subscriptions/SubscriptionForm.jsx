@@ -92,7 +92,7 @@ export default function SubscriptionForm() {
         <FormField label="Start from template">
           <Select value={templateId} onChange={(v) => setTemplateId(v)} options={[]} placeholder="Select a template" />
         </FormField>
-        <p style={{ fontSize: 12, color: '#8A97A8', marginBottom: 16 }}>Templates come from the Pricing section (Member 2). Pick one to pre-fill plan and lines.</p>
+        <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 16 }}>Templates come from the Pricing section (Member 2). Pick one to pre-fill plan and lines.</p>
         <FormField label="Customer">
           <Select value={form.customer_id} onChange={(v) => setForm({ ...form, customer_id: v })} options={customers.map((c) => ({ value: c.id, label: c.name }))} required />
         </FormField>
@@ -114,7 +114,7 @@ export default function SubscriptionForm() {
         <FormField label="Payment terms">
           <Input value={form.payment_terms} onChange={(e) => setForm({ ...form, payment_terms: e.target.value })} />
         </FormField>
-        <div style={{ fontWeight: 600, fontSize: 12, color: '#8A97A8', margin: '16px 0 8px' }}>Lines</div>
+        <div style={{ fontWeight: 600, fontSize: 12, color: 'var(--text-muted)', margin: '16px 0 8px' }}>Lines</div>
         {lines.map((l, i) => (
           <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 6 }}>
             <Select value={l.product_id} onChange={(v) => { const n = [...lines]; n[i] = { ...n[i], product_id: v }; setLines(n); }} options={[]} style={{ flex: 1 }} placeholder="Product" />

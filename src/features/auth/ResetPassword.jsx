@@ -35,11 +35,12 @@ export default function ResetPassword() {
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: '8vh auto', padding: 16 }}>
-      <Card style={{ padding: 32 }}>
+    <main className="auth-shell">
+      <Card className="auth-card">
+        <div className="auth-mark">BL</div>
         <h2 style={{ marginBottom: 8, fontSize: 24 }}>Reset password</h2>
-        <p style={{ color: '#8A97A8', fontSize: 14, marginBottom: 24 }}>Choose a new password</p>
-        {error && <div style={{ color: '#F26D6D', fontSize: 13, marginBottom: 16, padding: 8, background: 'rgba(242,109,109,0.1)', borderRadius: 6 }}>{error}</div>}
+        <p style={{ color: 'var(--text-muted)', fontSize: 14, marginBottom: 24 }}>Choose a new password</p>
+        {error && <div style={{ color: 'var(--danger)', fontSize: 13, marginBottom: 16, padding: 8, background: 'var(--danger-soft)', borderRadius: 6 }}>{error}</div>}
         <form onSubmit={handleSubmit}>
           <FormField label="New password">
             <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
@@ -48,10 +49,10 @@ export default function ResetPassword() {
             {submitting ? 'Resetting...' : 'Reset password'}
           </Button>
         </form>
-        <p style={{ marginTop: 20, fontSize: 13, color: '#8A97A8', textAlign: 'center' }}>
-          <a href="/login" style={{ color: '#2DD4A8', fontWeight: 600 }}>Back to sign in</a>
+        <p style={{ marginTop: 20, fontSize: 13, color: 'var(--text-muted)', textAlign: 'center' }}>
+          <a href="/login" style={{ color: 'var(--link)', fontWeight: 600 }}>Back to sign in</a>
         </p>
       </Card>
-    </div>
+    </main>
   );
 }

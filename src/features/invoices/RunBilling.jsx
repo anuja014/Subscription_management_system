@@ -51,9 +51,9 @@ export default function RunBilling() {
         <Card style={{ marginTop: 16 }}>
           <h3 style={{ marginBottom: 12 }}>Result</h3>
           <div style={{ display: 'flex', gap: 24, fontSize: 14 }}>
-            <div><div style={{ fontSize: 12, color: '#8A97A8' }}>Created</div><div style={{ fontSize: 20, fontWeight: 700, fontFamily: 'var(--font-mono)' }}>{result.created}</div></div>
-            <div><div style={{ fontSize: 12, color: '#8A97A8' }}>Skipped</div><div style={{ fontSize: 20, fontWeight: 700, fontFamily: 'var(--font-mono)' }}>{result.skipped}</div></div>
-            <div><div style={{ fontSize: 12, color: '#8A97A8' }}>Errors</div><div style={{ fontSize: 20, fontWeight: 700, fontFamily: 'var(--font-mono)', color: '#F26D6D' }}>{result.errors || 0}</div></div>
+            <div><div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Created</div><div style={{ fontSize: 20, fontWeight: 700, fontFamily: 'var(--font-mono)' }}>{result.created}</div></div>
+            <div><div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Skipped</div><div style={{ fontSize: 20, fontWeight: 700, fontFamily: 'var(--font-mono)' }}>{result.skipped}</div></div>
+            <div><div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Errors</div><div style={{ fontSize: 20, fontWeight: 700, fontFamily: 'var(--font-mono)', color: 'var(--danger)' }}>{result.errors || 0}</div></div>
           </div>
         </Card>
       )}

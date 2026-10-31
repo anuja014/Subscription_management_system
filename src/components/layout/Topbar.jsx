@@ -3,9 +3,10 @@ import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../ui';
+import { Menu, Moon, Sun } from 'lucide-react';
 
 export default function Topbar({ sidebarOpen, setSidebarOpen, signOut, profile }) {
-  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -45,24 +46,23 @@ export default function Topbar({ sidebarOpen, setSidebarOpen, signOut, profile }
 
   return (
     <header className="topbar">
-      <div className="topbar-left row gap-3">
-        <button onClick={() => setSidebarOpen(!sidebarOpen)} className="btn--ghost btn--sm" style={{ border: 'none', background: 'none', padding: 4 }}>
-          ☰
+      <div className="topbar-left">
+        <button onClick={() => setSidebarOpen(!sidebarOpen)} className="icon-button" aria-label="Toggle navigation">
+          <Menu size={19} />
         </button>
         {!publicRoutes.includes(location.pathname) && (
-          <span style={{ fontWeight: 700, color: '#E6EAF0', fontSize: 14, letterSpacing: '-0.02em' }}>Brightloop</span>
+          <span className="topbar-product">Brightloop</span>
         )}
       </div>
       <div className="topbar-right row gap-3">
         {!publicRoutes.includes(location.pathname) && (
-          <Button variant="ghost" size="sm" onClick={toggleTheme}>
-            {theme === 'dark' ? '☀️' : '🌙'}
+          <Button variant="ghost" size="sm" onClick={toggleTheme} className="theme-switch" aria-label="Toggle colour theme">
+            {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
           </Button>
         )}
         <div className="user-menu row gap-2">
-          <div style={{ fontSize: 12, color: '#8A97A8', display: 'none' }}>{profile?.email}</div>
           <div className="user-avatar">{initials}</div>
-          <button onClick={handleSignOut} className="btn btn--ghost btn--sm" style={{ border: 'none', padding: 0, minWidth: 'auto' }}>Sign out</button>
+          <button onClick={handleSignOut} className="sign-out">Sign out</button>
         </div>
       </div>
     </header>

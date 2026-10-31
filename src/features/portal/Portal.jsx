@@ -104,7 +104,7 @@ export default function Portal() {
       />
 
       {error && (
-        <div style={{ color: '#F26D6D', padding: 16, marginBottom: 24, background: 'rgba(242,109,109,0.1)', borderRadius: 6 }}>
+        <div style={{ color: 'var(--danger)', padding: 16, marginBottom: 24, background: 'var(--danger-soft)', borderRadius: 6 }}>
           Unable to load your customer records: {error}
         </div>
       )}

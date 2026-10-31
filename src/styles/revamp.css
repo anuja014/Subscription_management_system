@@ -1,0 +1,85 @@
+/* Product-wide visual system: dense where work happens, quiet everywhere else. */
+body {
+  background: var(--bg);
+}
+
+/* Navigation */
+.sidebar { box-shadow: none; }
+.sidebar-brand { font-family: var(--font-display); font-size: 17px; letter-spacing: -.04em; }
+.sidebar-nav li + li { margin-top: 2px; }
+.sidebar-nav a svg { flex: 0 0 auto; opacity: .78; }
+.sidebar-nav a.active svg { opacity: 1; }
+.sidebar-footer { display: grid; gap: 3px; text-transform: capitalize; letter-spacing: .01em; }
+.sidebar-role { color: var(--text); font-size: 12px; font-weight: 700; }
+.topbar-left { display: flex; align-items: center; gap: 12px; }
+.topbar-product { color: var(--text); font-family: var(--font-display); font-size: 15px; font-weight: 700; letter-spacing: -.035em; }
+.icon-button {
+  width: 34px; height: 34px; display: inline-grid; place-items: center; padding: 0;
+  background: transparent; color: var(--text-muted); border: 1px solid transparent; border-radius: var(--radius-sm); cursor: pointer;
+  transition: color var(--transition), background var(--transition), border-color var(--transition);
+}
+.icon-button:hover { color: var(--text); background: var(--surface-2); border-color: var(--border); }
+.theme-switch { width: 34px; padding: 0; }
+.sign-out { appearance: none; border: 0; background: transparent; color: var(--text-muted); padding: 5px; font: inherit; font-size: 12px; cursor: pointer; }
+.sign-out:hover { color: var(--text); }
+
+/* Workspace rhythm */
+.page > div[style*="padding"] { padding: 0 !important; }
+.page > div > .card, .page > .card { margin-bottom: var(--space-5); }
+.card { background: var(--surface); }
+.card-header { padding-bottom: var(--space-3); border-bottom: 1px solid var(--divider); }
+.card-footer, .modal-footer, .drawer-footer { padding-top: var(--space-3); border-top: 1px solid var(--divider); }
+.page-header > div:first-child { max-width: 640px; }
+.page-header h1 { font-family: var(--font-display); font-weight: 720; }
+.page-header p { margin: 6px 0 0; font-size: 13px; }
+
+/* Data density and legibility */
+.data-table th { height: 42px; }
+.data-table td { height: 52px; }
+.data-table td:first-child { font-weight: 600; }
+.data-table .btn { background: transparent; }
+.badge { min-height: 22px; border-radius: var(--radius-sm); padding: 3px 8px; font-size: 10px; }
+.filter-bar { padding: 12px; margin-bottom: var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); }
+.filter-bar .input-group { min-width: 150px; }
+
+/* Auth is intentionally distinct from the operational workspace. */
+.auth-shell {
+  width: min(100% - 32px, 440px); min-height: 100%; margin: 0 auto; padding: clamp(40px, 12vh, 128px) 0 40px;
+  display: flex; align-items: flex-start;
+}
+.auth-card { width: 100%; padding: 36px !important; border-color: var(--border); box-shadow: var(--shadow-sm); }
+.auth-card--centered { text-align: center; }
+.auth-mark { width: 38px; height: 38px; display: grid; place-items: center; margin-bottom: 28px; border-radius: 11px; background: var(--accent); color: var(--accent-contrast); font-family: var(--font-mono); font-size: 12px; font-weight: 800; letter-spacing: .08em; }
+.auth-card--centered .auth-mark { margin-inline: auto; }
+.auth-card h2 { font-family: var(--font-display); font-weight: 720; letter-spacing: -.035em; }
+.auth-card .input-group { margin-bottom: 16px; }
+.auth-card .btn--primary { margin-top: 8px !important; min-height: 42px; }
+
+@media (max-width: 960px) {
+  .topbar-product { display: none; }
+}
+
+html:not([data-theme='dark']) .sidebar { background: var(--surface); }
+html:not([data-theme='dark']) .topbar { background: var(--surface); }
+
+:where(button, a, input, select, textarea):focus-visible {
+  outline-color: var(--accent);
+}
+
+.btn:hover { transform: none; }
+.btn:active { transform: none; }
+.btn--primary:hover { box-shadow: none; }
+.sidebar-nav a:hover { transform: none; }
+
+@media (max-width: 640px) {
+  .sidebar { width: min(290px, 86vw); }
+  .topbar { height: 56px; }
+  .user-avatar { width: 29px; height: 29px; font-size: 11px; }
+  .sign-out { display: none; }
+  .page-header { margin-bottom: var(--space-4); }
+  .page > div[style*="display: flex"]:has(> .input-group) { flex-direction: column; align-items: stretch !important; }
+  .page > div[style*="display: flex"]:has(> .input-group) > .btn { width: 100%; }
+  .data-table td { min-height: 44px; height: auto; }
+  .auth-shell { width: min(100% - 24px, 440px); padding-top: 48px; }
+  .auth-card { padding: 26px 22px !important; }
+}

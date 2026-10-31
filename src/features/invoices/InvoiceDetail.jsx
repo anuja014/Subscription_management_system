@@ -168,7 +168,7 @@ export default function InvoiceDetail() {
               <div>Tax: <MoneyText amount={inv.tax_total} /></div>
               <div style={{ fontWeight: 700, fontSize: 16, marginTop: 6 }}>Total: <MoneyText amount={inv.total} /></div>
               <div style={{ fontWeight: 700 }}>Paid: <MoneyText amount={inv.amount_paid} /></div>
-              <div style={{ fontWeight: 700, color: outstanding > 0 ? '#F26D6D' : '#34D399' }}>Outstanding: <MoneyText amount={outstanding} /></div>
+              <div style={{ fontWeight: 700, color: outstanding > 0 ? 'var(--danger)' : 'var(--success)' }}>Outstanding: <MoneyText amount={outstanding} /></div>
             </div>
           </Card>
         </>

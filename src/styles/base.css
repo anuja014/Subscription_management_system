@@ -16,7 +16,10 @@ html, body, #root {
   -webkit-font-smoothing: antialiased;
 }
 
-a { color: var(--accent); text-decoration: none; }
+html { text-rendering: optimizeLegibility; }
+body { min-width: 320px; }
+
+a { color: var(--link); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
 button, input, select, textarea {
@@ -30,16 +33,16 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.01em;
 }
 
-h1 { font-size: 24px; margin-bottom: var(--space-4); }
+h1 { font-size: clamp(1.5rem, 1.25rem + .65vw, 2rem); line-height: 1.2; margin-bottom: var(--space-4); letter-spacing: -.035em; }
 h2 { font-size: 20px; margin-bottom: var(--space-3); }
 h3 { font-size: 16px; margin-bottom: var(--space-2); }
 
 p { margin-bottom: var(--space-3); color: var(--text-muted); }
 
 /* Scrollbar */
-::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: var(--border); border: 3px solid var(--bg); border-radius: 99px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
 /* Print rules */
@@ -52,7 +55,7 @@ p { margin-bottom: var(--space-3); color: var(--text-muted); }
 }
 
 /* Focus visible for accessibility */
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 /* Loading skeleton */
 .skeleton {
@@ -70,4 +73,11 @@ p { margin-bottom: var(--space-3); color: var(--text-muted); }
 @media (prefers-reduced-motion: reduce) {
   .skeleton { animation: none; }
   * { transition: none !important; animation: none !important; }
+}
+
+/* Feature screens use a few legacy inline grids; keep their layouts fluid without changing markup. */
+@media (max-width: 640px) {
+  .page > div[style*="padding"] { padding: 0 !important; }
+  .page div[style*="grid-template-columns"] { grid-template-columns: 1fr !important; }
+  .page form[style*="align-items"] { align-items: stretch !important; }
 }

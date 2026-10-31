@@ -1,27 +1,57 @@
-/* src/styles/tokens.css
-   Design tokens for Brightloop Billing.
-   Rule: colours and spacing only through variables here. No hardcoded colours in JSX.
-   Owner: Member 1 edits this file. Others request changes in team chat.
-*/
-
+/* Central design tokens for Brightloop Billing. */
 :root {
-  /* --- Dark theme (default) --- */
-  --bg: #0B0F14;
-  --surface: #121821;
-  --surface-2: #18202B;
-  --border: #243041;
-  --text: #E6EAF0;
-  --text-muted: #8A97A8;
-  --accent: #2DD4A8;
-  --accent-hover: #1FB78B;
-  --success: #34D399;
-  --warning: #F5B54A;
-  --danger: #F26D6D;
-  --info: #5AA9F0;
+  /* Material Design Orange */
+  --orange-50: #FFF3E0;
+  --orange-100: #FFE0B2;
+  --orange-200: #FFCC80;
+  --orange-300: #FFB74D;
+  --orange-400: #FFA726;
+  --orange-500: #FF9800;
+  --orange-600: #FB8C00;
+  --orange-700: #F57C00;
+  --orange-800: #EF6C00;
+  --orange-900: #E65100;
+
+  /* Light enterprise theme (default) */
+  --bg: #F7F7F8;
+  --surface: #FFFFFF;
+  --surface-2: #F2F2F2;
+  --surface-3: #EEEEEE;
+  --border: #E5E5E5;
+  --divider: #EEEEEE;
+  --text: #242424;
+  --text-muted: #666666;
+  --text-subtle: #8A8A8A;
+  --brand: var(--orange-500);
+  --accent: var(--orange-600);
+  --accent-hover: var(--orange-700);
+  --accent-soft: var(--orange-50);
+  --accent-selected: var(--orange-100);
+  --accent-strong: var(--orange-800);
+  --link: var(--orange-900);
+  --accent-contrast: #242424;
+
+  /* Semantic states remain distinct from brand orange. */
+  --success: #2E7D52;
+  --success-contrast: #FFFFFF;
+  --success-soft: #E8F5EC;
+  --warning: #9A6100;
+  --warning-soft: #FFF4DB;
+  --danger: #B3261E;
+  --danger-contrast: #FFFFFF;
+  --danger-hover: #8F1D17;
+  --danger-soft: #FCE8E6;
+  --info: #246B9E;
+  --info-soft: #E8F2FA;
+  --chart-1: var(--orange-600);
+  --chart-2: #2E7D52;
+  --chart-3: #246B9E;
+  --chart-4: #9A6100;
+  --chart-5: #8A8A8A;
 
   --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
 
   --space-1: 4px;
   --space-2: 8px;
@@ -31,37 +61,56 @@
   --space-6: 32px;
   --space-7: 48px;
 
-  --font-sans: 'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'JetBrains Mono', 'IBM Plex Mono', 'SF Mono', Menlo, monospace;
+  --font-sans: Inter, "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: Inter, "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", "SF Mono", Menlo, monospace;
 
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.35);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
-
+  --shadow-sm: 0 1px 2px rgba(36, 36, 36, .04);
+  --shadow-md: 0 8px 24px rgba(36, 36, 36, .10);
   --transition: 150ms ease;
 }
 
-html[data-theme='light'] {
-  /* --- Light theme --- */
-  --bg: #F6F7F9;
-  --surface: #FFFFFF;
-  --surface-2: #EEF1F5;
-  --border: #DDE2E9;
-  --text: #10151C;
-  --text-muted: #5B6676;
-  --accent: #0E9F7E;
-  --accent-hover: #0C8A6B;
-  --success: #15803D;
-  --warning: #B45309;
-  --danger: #B91C1C;
-  --info: #1D6FBF;
-
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+html[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #171717;
+  --surface: #202020;
+  --surface-2: #292929;
+  --surface-3: #333333;
+  --border: #3B3B3B;
+  --divider: #333333;
+  --text: #F5F5F5;
+  --text-muted: #C2C2C2;
+  --text-subtle: #A0A0A0;
+  --brand: var(--orange-400);
+  --accent: var(--orange-400);
+  --accent-hover: var(--orange-300);
+  --accent-soft: #3B2B18;
+  --accent-selected: #4A3219;
+  --accent-strong: var(--orange-200);
+  --link: var(--orange-200);
+  --accent-contrast: #242424;
+  --success: #81C995;
+  --success-contrast: #242424;
+  --success-soft: #1E3325;
+  --warning: #F2C66D;
+  --warning-soft: #3A301B;
+  --danger: #F28B82;
+  --danger-contrast: #242424;
+  --danger-hover: #F6AEA8;
+  --danger-soft: #3B2422;
+  --info: #8AB4D8;
+  --info-soft: #1F2D3A;
+  --chart-1: var(--orange-400);
+  --chart-2: #81C995;
+  --chart-3: #8AB4D8;
+  --chart-4: #F2C66D;
+  --chart-5: #A0A0A0;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, .18);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, .24);
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
+html { color-scheme: light; }
 
 body {
   background: var(--bg);
@@ -71,7 +120,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Tabular numerals for IDs and amounts */
 .mono, .mono-nums {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
