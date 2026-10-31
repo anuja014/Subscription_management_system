@@ -23,6 +23,7 @@ export default function Payments() {
   const [invId, setInvId] = useState('');
   const [form, setForm] = useState({ invoice_id: '', method: 'card', amount: '', payment_date: new Date().toISOString().slice(0, 10), note: '' });
   const [submitting, setSubmitting] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => { load(); }, []);
 
@@ -33,14 +34,19 @@ export default function Payments() {
   };
 
   async function load() {
-    const [pRes, iRes] = await Promise.all([
-      supabase.from('payments').select('*, invoices(number)').order('payment_date', { ascending: false }).limit(100),
-      supabase.from('invoices').select('id, number, total, amount_paid, status').eq('status', 'confirmed').limit(200),
-    ]);
-    if (pRes.error) addToast(pRes.error.message, 'error');
-    else setPayments(pRes.data || []);
-    if (iRes.error) addToast(iRes.error.message, 'error');
-    else setInvoices(iRes.data || []);
+    setLoading(true);
+    try {
+      const [pRes, iRes] = await Promise.all([
+        supabase.from('payments').select('*, invoices(number)').order('payment_date', { ascending: false }).limit(100),
+        supabase.from('invoices').select('id, number, total, amount_paid, status').eq('status', 'confirmed').limit(200),
+      ]);
+      if (pRes.error) addToast(pRes.error.message, 'error');
+      else setPayments(pRes.data || []);
+      if (iRes.error) addToast(iRes.error.message, 'error');
+      else setInvoices(iRes.data || []);
+    } finally {
+      setLoading(false);
+    }
   }
 
   const handleSubmit = async (e) => {
@@ -80,7 +86,7 @@ export default function Payments() {
         <Toast key={t.id} message={t.msg} type={t.type} onClose={() => setToasts((ts) => ts.filter((x) => x.id !== t.id))} />
       ))}
       <PageHeader title="Payments" subtitle="Record payments against invoices" />
-      <Button variant="primary" onClick={() => setOpen(true)}>Record payment</Button>
+      <Button variant="primary" onClick={() => setOpen(true)} style={{ marginBottom: 16 }}>Record payment</Button>
       <Card>
         <DataTable
           columns={[
@@ -91,27 +97,31 @@ export default function Payments() {
             { key: 'note', label: 'Note' },
           ]}
           data={payments}
+          loading={loading}
         />
       </Card>
 
       <Modal isOpen={open} onClose={() => setOpen(false)} title="Record payment">
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <FormField label="Invoice">
-            <Select value={form.invoice_id} onChange={(v) => setForm({ ...form, invoice_id: v })} options={invoices.map((i) => ({ value: i.id, label: `${i.number} — $${i.total} (outstanding $${Math.max(0, Number(i.total) - Number(i.amount_paid))})` }))} required />
+            <Select value={form.invoice_id} onChange={(v) => {
+              setForm({ ...form, invoice_id: v });
+              const inv = invoices.find((i) => i.id === v);
+              if (inv) setForm((f) => ({ ...f, invoice_id: v, amount: String(Math.max(0, Number(inv.total) - Number(inv.amount_paid))) }));
+            }} options={invoices.map((i) => ({ value: i.id, label: `${i.number} ($${Number(i.total) - Number(i.amount_paid)} due)` }))} placeholder="Select unpaid invoice" required />
           </FormField>
           <FormField label="Method">
             <Select value={form.method} onChange={(v) => setForm({ ...form, method: v })} options={[
-              { value: 'card', label: 'Card' },
-              { value: 'bank transfer', label: 'Bank transfer' },
-              { value: 'upi', label: 'UPI' },
+              { value: 'card', label: 'Credit card' },
+              { value: 'bank_transfer', label: 'Bank transfer' },
               { value: 'cash', label: 'Cash' },
-              { value: 'cheque', label: 'Cheque' },
+              { value: 'other', label: 'Other' },
             ]} />
           </FormField>
           <FormField label="Amount">
-            <Input type="number" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} required />
+            <Input type="number" step="0.01" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} required />
           </FormField>
-          <FormField label="Date">
+          <FormField label="Payment date">
             <DateInput value={form.payment_date} onChange={(v) => setForm({ ...form, payment_date: v })} required />
           </FormField>
           <FormField label="Note">

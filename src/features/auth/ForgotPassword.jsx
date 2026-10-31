@@ -31,7 +31,7 @@ export default function ForgotPassword() {
     return (
       <main className="auth-shell">
         <Card className="auth-card auth-card--centered">
-          <div className="auth-mark">BL</div>
+          <div className="auth-mark">AU</div>
           <h2 style={{ marginBottom: 8, fontSize: 24 }}>Check your email</h2>
           <p style={{ color: 'var(--text-muted)', fontSize: 14, marginBottom: 24 }}>A password reset link has been sent to {email}</p>
           <Button variant="primary" onClick={() => navigate('/login')} className="w-full" style={{ width: '100%' }}>Back to sign in</Button>

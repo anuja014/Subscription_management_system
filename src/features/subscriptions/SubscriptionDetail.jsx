@@ -9,8 +9,9 @@ import { Stepper } from '../../components/ui';
 import { MoneyText } from '../../components/ui';
 import { PageHeader } from '../../components/ui';
 import { Toast, ToastContainer } from '../../components/ui';
+import { LogoSpinner } from '../../components/ui';
 import { supabase } from '../../lib/supabaseClient';
-import { statusLabel } from '../../lib/format';
+import { statusBadgeClass, statusLabel } from '../../lib/format';
 
 export default function SubscriptionDetail() {
   const { id } = useParams();
@@ -30,15 +31,18 @@ export default function SubscriptionDetail() {
 
   async function load() {
     setLoading(true);
-    const [sRes, lRes] = await Promise.all([
-      supabase.from('subscriptions').select('*, customers(name, email), plans(name, billing_period)').eq('id', id).single(),
-      supabase.from('subscription_lines').select('*, products(name), product_variants(value)').eq('subscription_id', id),
-    ]);
-    if (sRes.error) addToast(sRes.error.message, 'error');
-    else setSub(sRes.data);
-    if (lRes.error) addToast(lRes.error.message, 'error');
-    else setLines(lRes.data || []);
-    setLoading(false);
+    try {
+      const [sRes, lRes] = await Promise.all([
+        supabase.from('subscriptions').select('*, customers(name, email), plans(name, billing_period)').eq('id', id).single(),
+        supabase.from('subscription_lines').select('*, products(name), product_variants(value)').eq('subscription_id', id),
+      ]);
+      if (sRes.error) addToast(sRes.error.message, 'error');
+      else setSub(sRes.data);
+      if (lRes.error) addToast(lRes.error.message, 'error');
+      else setLines(lRes.data || []);
+    } finally {
+      setLoading(false);
+    }
   }
 
   const total = lines.reduce((sum, l) => sum + Number(l.amount || 0), 0);
@@ -50,7 +54,14 @@ export default function SubscriptionDetail() {
     else { addToast('Status updated', 'success'); load(); }
   };
 
-  if (loading) return <div style={{ padding: 24, textAlign: 'center' }}>Loading...</div>;
+  if (loading) {
+    return (
+      <div style={{ padding: 24, display: 'grid', placeItems: 'center', minHeight: '60vh' }}>
+        <LogoSpinner size="lg" label="Loading subscription details…" />
+      </div>
+    );
+  }
+
   if (!sub) return <div style={{ padding: 24, textAlign: 'center' }}>Not found</div>;
 
   return (
@@ -99,6 +110,7 @@ export default function SubscriptionDetail() {
             { key: 'amount', label: 'Amount', render: (r) => <MoneyText amount={r.amount} /> },
           ]}
           data={lines}
+          loading={loading}
         />
         <div style={{ marginTop: 12, textAlign: 'right', fontWeight: 700, fontSize: 16 }}>
           Total: <MoneyText amount={total} />

@@ -50,11 +50,11 @@
   );
 }
 
-/* Logo sits on top of ring, inside the hole */
+/* Logo sits inside ring, preserving full emblem shape */
 .logo-spinner-img {
   position: absolute;
-  border-radius: 50%;
-  object-fit: cover;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 8px rgba(251, 140, 0, 0.4));
   animation: logo-pulse 1.8s ease-in-out infinite;
   /* counter-rotate so logo stays upright */
   animation-name: logo-pulse, logo-ring-counter;

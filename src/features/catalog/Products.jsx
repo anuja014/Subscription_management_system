@@ -22,6 +22,7 @@ export default function Products() {
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState({ name: '', type: 'service', sales_price: '', cost_price: '', notes: '', is_active: true });
   const [submitting, setSubmitting] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => { load(); }, []);
 
@@ -32,9 +33,14 @@ export default function Products() {
   };
 
   async function load() {
-    const { data, error } = await supabase.from('products').select('*').order('created_at', { ascending: false });
-    if (error) addToast(error.message, 'error');
-    else setProducts(data || []);
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.from('products').select('*').order('created_at', { ascending: false });
+      if (error) addToast(error.message, 'error');
+      else setProducts(data || []);
+    } finally {
+      setLoading(false);
+    }
   }
 
   const handleSubmit = async (e) => {
@@ -95,6 +101,7 @@ export default function Products() {
             ) },
           ]}
           data={products}
+          loading={loading}
         />
       </Card>
 

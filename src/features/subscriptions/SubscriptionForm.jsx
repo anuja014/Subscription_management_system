@@ -10,6 +10,7 @@ import { Card } from '../../components/ui';
 import { FormField } from '../../components/ui/FormField';
 import { PageHeader } from '../../components/ui';
 import { Toast, ToastContainer } from '../../components/ui';
+import { LogoSpinner } from '../../components/ui';
 import { supabase } from '../../lib/supabaseClient';
 
 export default function SubscriptionForm() {
@@ -22,6 +23,7 @@ export default function SubscriptionForm() {
   const [lines, setLines] = useState([]);
   const [form, setForm] = useState({ customer_id: '', plan_id: '', start_date: '', next_billing_date: '', payment_terms: 'Net 15', status: 'draft' });
   const [submitting, setSubmitting] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const addToast = (msg, type = 'info') => {
     const n = Date.now();
@@ -36,6 +38,8 @@ export default function SubscriptionForm() {
     ]).then(([cRes, pRes]) => {
       if (!cRes.error) setCustomers(cRes.data || []);
       if (!pRes.error) setPlans(pRes.data || []);
+    }).finally(() => {
+      setLoading(false);
     });
   }, []);
 
@@ -45,7 +49,7 @@ export default function SubscriptionForm() {
       supabase.from('quotation_templates').select('*, quotation_template_lines(*)').eq('id', templateId).single().then((res) => {
         if (!res.error) {
           const t = res.data;
-          setForm({ ...form, plan_id: t.plan_id });
+          setForm((f) => ({ ...f, plan_id: t.plan_id }));
           setLines((t.quotation_template_lines || []).map((l) => ({ product_id: l.product_id, variant_id: l.variant_id, quantity: l.quantity })));
         }
       });
@@ -80,6 +84,14 @@ export default function SubscriptionForm() {
       setSubmitting(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div style={{ padding: 24, display: 'grid', placeItems: 'center', minHeight: '60vh' }}>
+        <LogoSpinner size="lg" label="Loading subscription form…" />
+      </div>
+    );
+  }
 
   return (
     <div style={{ padding: 24, maxWidth: 700 }}>

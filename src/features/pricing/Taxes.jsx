@@ -21,6 +21,7 @@ export default function Taxes() {
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState({ name: '', type: 'percentage', rate: '', is_active: true });
   const [submitting, setSubmitting] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => { load(); }, []);
 
@@ -31,9 +32,14 @@ export default function Taxes() {
   };
 
   async function load() {
-    const { data, error } = await supabase.from('taxes').select('*').order('created_at', { ascending: false });
-    if (error) addToast(error.message, 'error');
-    else setTaxes(data || []);
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.from('taxes').select('*').order('created_at', { ascending: false });
+      if (error) addToast(error.message, 'error');
+      else setTaxes(data || []);
+    } finally {
+      setLoading(false);
+    }
   }
 
   const handleSubmit = async (e) => {
@@ -95,6 +101,7 @@ export default function Taxes() {
             ) },
           ]}
           data={taxes}
+          loading={loading}
         />
       </Card>
 
@@ -113,7 +120,7 @@ export default function Taxes() {
             <Input type="number" value={form.rate} onChange={(e) => setForm({ ...form, rate: e.target.value })} required />
           </FormField>
           <FormField label="Active">
-            <Checkbox label="Active" checked={form.is_active} onChange={(v) => setForm({ ...form, is_active: v })} />
+            <Checkbox label="Active tax rule" checked={form.is_active} onChange={(v) => setForm({ ...form, is_active: v })} />
           </FormField>
           <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 8 }}>
             <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>

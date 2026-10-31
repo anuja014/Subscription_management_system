@@ -31,9 +31,9 @@ export default function Login() {
   return (
     <main className="auth-shell">
       <Card className="auth-card">
-        <div className="auth-mark">BL</div>
+        <div className="auth-mark">AU</div>
         <h2 style={{ marginBottom: 8, fontSize: 24 }}>Welcome back</h2>
-        <p style={{ color: 'var(--text-muted)', fontSize: 14, marginBottom: 24 }}>Sign in to your Brightloop account</p>
+        <p style={{ color: 'var(--text-muted)', fontSize: 14, marginBottom: 24 }}>Sign in to your Aureon account</p>
         {error && <div style={{ color: 'var(--danger)', fontSize: 13, marginBottom: 16, padding: 8, background: 'var(--danger-soft)', borderRadius: 6 }}>{error}</div>}
         <form onSubmit={handleSubmit}>
           <FormField label="Email">

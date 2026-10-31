@@ -19,6 +19,7 @@ export default function SubscriptionList() {
   const [plans, setPlans] = useState([]);
   const [filterStatus, setFilterStatus] = useState('');
   const [filterCustomer, setFilterCustomer] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => { load(); }, []);
 
@@ -29,17 +30,22 @@ export default function SubscriptionList() {
   };
 
   async function load() {
-    const [sRes, cRes, pRes] = await Promise.all([
-      supabase.from('subscriptions').select('*, customers(name), plans(name)').order('created_at', { ascending: false }),
-      supabase.from('customers').select('id, name'),
-      supabase.from('plans').select('id, name'),
-    ]);
-    if (sRes.error) addToast(sRes.error.message, 'error');
-    else setSubs(sRes.data || []);
-    if (cRes.error) addToast(cRes.error.message, 'error');
-    else setCustomers(cRes.data || []);
-    if (pRes.error) addToast(pRes.error.message, 'error');
-    else setPlans(pRes.data || []);
+    setLoading(true);
+    try {
+      const [sRes, cRes, pRes] = await Promise.all([
+        supabase.from('subscriptions').select('*, customers(name), plans(name)').order('created_at', { ascending: false }),
+        supabase.from('customers').select('id, name'),
+        supabase.from('plans').select('id, name'),
+      ]);
+      if (sRes.error) addToast(sRes.error.message, 'error');
+      else setSubs(sRes.data || []);
+      if (cRes.error) addToast(cRes.error.message, 'error');
+      else setCustomers(cRes.data || []);
+      if (pRes.error) addToast(pRes.error.message, 'error');
+      else setPlans(pRes.data || []);
+    } finally {
+      setLoading(false);
+    }
   }
 
   const filtered = subs.filter((s) => (!filterStatus || s.status === filterStatus) && (!filterCustomer || s.customer_id === filterCustomer));
@@ -75,7 +81,7 @@ export default function SubscriptionList() {
         <Button variant="primary" onClick={() => navigate('/subscriptions/new')}>New subscription</Button>
       </div>
       <Card>
-        <DataTable columns={columns} data={filtered} />
+        <DataTable columns={columns} data={filtered} loading={loading} />
       </Card>
     </div>
   );

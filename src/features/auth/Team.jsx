@@ -17,14 +17,20 @@ export default function Team() {
   const [staff, setStaff] = useState([]);
   const [form, setForm] = useState({ email: '', full_name: '', password: '' });
   const [submitting, setSubmitting] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadStaff();
   }, []);
 
   async function loadStaff() {
-    const { data } = await supabaseQuery('profiles', { select: '*', order: { column: 'created_at', ascending: false } });
-    setStaff(data || []);
+    setLoading(true);
+    try {
+      const { data } = await supabaseQuery('profiles', { select: '*', order: { column: 'created_at', ascending: false } });
+      setStaff(data || []);
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function supabaseQuery(table, opts) {
@@ -78,6 +84,7 @@ export default function Team() {
             { key: 'created_at', label: 'Joined', render: (r) => new Date(r.created_at).toLocaleDateString() },
           ]}
           data={staff}
+          loading={loading}
         />
       </Card>
     </div>

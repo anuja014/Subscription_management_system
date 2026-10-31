@@ -21,7 +21,7 @@ export function LogoSpinner({ size = 'md', label = 'Loading…' }) {
           src={logoImg}
           alt="Loading"
           className="logo-spinner-img"
-          style={{ width: s.logo, height: s.logo }}
+          style={{ width: s.logo, height: Math.round(s.logo * 0.68) }}
         />
       </div>
       {label && (

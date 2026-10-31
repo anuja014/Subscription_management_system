@@ -23,6 +23,7 @@ export default function Plans() {
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState({ name: '', price: '', billing_period: 'monthly', min_quantity: '1', available_from: '', available_to: '', auto_close: false, allow_early_close: true, allow_pause: true, allow_renew: true, is_active: true });
   const [submitting, setSubmitting] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => { load(); }, []);
 
@@ -33,9 +34,14 @@ export default function Plans() {
   };
 
   async function load() {
-    const { data, error } = await supabase.from('plans').select('*').order('created_at', { ascending: false });
-    if (error) addToast(error.message, 'error');
-    else setPlans(data || []);
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.from('plans').select('*').order('created_at', { ascending: false });
+      if (error) addToast(error.message, 'error');
+      else setPlans(data || []);
+    } finally {
+      setLoading(false);
+    }
   }
 
   const handleSubmit = async (e) => {
@@ -98,6 +104,7 @@ export default function Plans() {
             ) },
           ]}
           data={plans}
+          loading={loading}
         />
       </Card>
 
@@ -118,7 +125,7 @@ export default function Plans() {
             ]} />
           </FormField>
           <FormField label="Min quantity">
-            <Input type="number" value={form.min_quantity} onChange={(e) => setForm({ ...form, min_quantity: e.target.value })} />
+            <Input type="number" value={form.min_quantity} onChange={(e) => setForm({ ...form, min_quantity: e.target.value })} required />
           </FormField>
           <FormField label="Available from">
             <DateInput value={form.available_from} onChange={(v) => setForm({ ...form, available_from: v })} />
@@ -126,13 +133,13 @@ export default function Plans() {
           <FormField label="Available to">
             <DateInput value={form.available_to} onChange={(v) => setForm({ ...form, available_to: v })} />
           </FormField>
-          <FormField label="Flags">
-            <Checkbox label="Auto-close on end date" checked={form.auto_close} onChange={(v) => setForm({ ...form, auto_close: v })} />
+          <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+            <Checkbox label="Auto close" checked={form.auto_close} onChange={(v) => setForm({ ...form, auto_close: v })} />
             <Checkbox label="Allow early close" checked={form.allow_early_close} onChange={(v) => setForm({ ...form, allow_early_close: v })} />
             <Checkbox label="Allow pause" checked={form.allow_pause} onChange={(v) => setForm({ ...form, allow_pause: v })} />
             <Checkbox label="Allow renew" checked={form.allow_renew} onChange={(v) => setForm({ ...form, allow_renew: v })} />
-            <Checkbox label="Active" checked={form.is_active} onChange={(v) => setForm({ ...form, is_active: v })} />
-          </FormField>
+            <Checkbox label="Active plan" checked={form.is_active} onChange={(v) => setForm({ ...form, is_active: v })} />
+          </div>
           <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 8 }}>
             <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
             <Button type="submit" variant="primary" disabled={submitting}>{submitting ? 'Saving...' : 'Save plan'}</Button>

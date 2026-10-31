@@ -24,6 +24,7 @@ export default function Discounts() {
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState({ name: '', type: 'percentage', value: '', min_purchase: '', min_quantity: '1', start_date: '', end_date: '', usage_limit: '', applies_to: 'subscription', is_active: true });
   const [submitting, setSubmitting] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { profile } = useAuth();
 
   useEffect(() => { load(); }, []);
@@ -35,9 +36,14 @@ export default function Discounts() {
   };
 
   async function load() {
-    const { data, error } = await supabase.from('discounts').select('*').order('created_at', { ascending: false });
-    if (error) addToast(error.message, 'error');
-    else setDiscounts(data || []);
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.from('discounts').select('*').order('created_at', { ascending: false });
+      if (error) addToast(error.message, 'error');
+      else setDiscounts(data || []);
+    } finally {
+      setLoading(false);
+    }
   }
 
   const handleSubmit = async (e) => {
@@ -92,6 +98,7 @@ export default function Discounts() {
             ) },
           ]}
           data={discounts}
+          loading={loading}
         />
       </Card>
 
@@ -109,29 +116,30 @@ export default function Discounts() {
           <FormField label="Value">
             <Input type="number" value={form.value} onChange={(e) => setForm({ ...form, value: e.target.value })} required />
           </FormField>
-          <FormField label="Min purchase">
+          <FormField label="Min purchase amount">
             <Input type="number" value={form.min_purchase} onChange={(e) => setForm({ ...form, min_purchase: e.target.value })} />
           </FormField>
           <FormField label="Min quantity">
             <Input type="number" value={form.min_quantity} onChange={(e) => setForm({ ...form, min_quantity: e.target.value })} />
           </FormField>
+          <FormField label="Usage limit">
+            <Input type="number" value={form.usage_limit} onChange={(e) => setForm({ ...form, usage_limit: e.target.value })} />
+          </FormField>
           <FormField label="Start date">
-            <DateInput value={form.start_date} onChange={(v) => setForm({ ...form, start_date: v })} required />
+            <DateInput value={form.start_date} onChange={(v) => setForm({ ...form, start_date: v })} />
           </FormField>
           <FormField label="End date">
-            <DateInput value={form.end_date} onChange={(v) => setForm({ ...form, end_date: v })} required />
-          </FormField>
-          <FormField label="Usage limit (optional)">
-            <Input type="number" value={form.usage_limit} onChange={(e) => setForm({ ...form, usage_limit: e.target.value })} />
+            <DateInput value={form.end_date} onChange={(v) => setForm({ ...form, end_date: v })} />
           </FormField>
           <FormField label="Applies to">
             <Select value={form.applies_to} onChange={(v) => setForm({ ...form, applies_to: v })} options={[
               { value: 'subscription', label: 'Subscription' },
+              { value: 'invoice', label: 'Invoice' },
               { value: 'product', label: 'Product' },
             ]} />
           </FormField>
           <FormField label="Active">
-            <Checkbox label="Active" checked={form.is_active} onChange={(v) => setForm({ ...form, is_active: v })} />
+            <Checkbox label="Active discount" checked={form.is_active} onChange={(v) => setForm({ ...form, is_active: v })} />
           </FormField>
           <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 8 }}>
             <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>

@@ -7,6 +7,7 @@ import { StatCard } from '../../components/ui';
 import { PageHeader } from '../../components/ui';
 import { Toast, ToastContainer } from '../../components/ui';
 import { MoneyText } from '../../components/ui';
+import { LogoSpinner } from '../../components/ui';
 import { supabase } from '../../lib/supabaseClient';
 import { statusBadgeClass, statusLabel } from '../../lib/format';
 import { useAuth } from '../../context/AuthContext';
@@ -34,59 +35,73 @@ export default function Portal() {
     setLoading(true);
     setError('');
 
-    const { data: custRows, error: customerError } = await supabase
-      .from('customers')
-      .select('*')
-      .eq('profile_id', profileId)
-      .order('created_at', { ascending: true });
+    try {
+      const { data: custRows, error: customerError } = await supabase
+        .from('customers')
+        .select('*')
+        .eq('profile_id', profileId)
+        .order('created_at', { ascending: true });
 
-    if (customerError) {
-      setError(customerError.message);
+      if (customerError) {
+        setError(customerError.message);
+        return;
+      }
+
+      const customers = custRows || [];
+      const customerIds = customers.map((c) => c.id);
+      setCustomer(customers[0] || null);
+
+      if (customerIds.length === 0) {
+        setSubs([]);
+        setInvoices([]);
+        return;
+      }
+
+      const [sRes, iRes] = await Promise.all([
+        supabase
+          .from('subscriptions')
+          .select('*, plans(name)')
+          .in('customer_id', customerIds)
+          .order('created_at', { ascending: false }),
+        supabase
+          .from('invoices')
+          .select('*')
+          .in('customer_id', customerIds)
+          .order('created_at', { ascending: false }),
+      ]);
+
+      if (sRes.error) {
+        addToast(sRes.error.message, 'error');
+        setSubs([]);
+      } else {
+        setSubs(sRes.data || []);
+      }
+
+      if (iRes.error) {
+        addToast(iRes.error.message, 'error');
+        setInvoices([]);
+      } else {
+        setInvoices(iRes.data || []);
+      }
+    } finally {
       setLoading(false);
-      return;
     }
-
-    const customers = custRows || [];
-    const customerIds = customers.map((c) => c.id);
-    setCustomer(customers[0] || null);
-
-    if (customerIds.length === 0) {
-      setSubs([]);
-      setInvoices([]);
-      setLoading(false);
-      return;
-    }
-
-    const [sRes, iRes] = await Promise.all([
-      supabase
-        .from('subscriptions')
-        .select('*, plans(name)')
-        .in('customer_id', customerIds)
-        .order('created_at', { ascending: false }),
-      supabase
-        .from('invoices')
-        .select('*, subscriptions(number)')
-        .in('customer_id', customerIds)
-        .order('created_at', { ascending: false }),
-    ]);
-
-    const queryError = sRes.error || iRes.error;
-    if (queryError) {
-      setError(queryError.message);
-    } else {
-      setSubs(sRes.data || []);
-      setInvoices(iRes.data || []);
-    }
-    setLoading(false);
   }
 
   const activeSubs = subs.filter((s) => s.status === 'active').length;
-  const outstanding = invoices.reduce(
-    (sum, i) => sum + Math.max(0, Number(i.total || 0) - Number(i.amount_paid || 0)),
-    0
-  );
+  const outstanding = invoices.reduce((sum, inv) => {
+    if (inv.status === 'cancelled') return sum;
+    const balance = Number(inv.total || 0) - Number(inv.amount_paid || 0);
+    return sum + Math.max(0, balance);
+  }, 0);
 
-  if (loading) return <div style={{ padding: 24, textAlign: 'center' }}>Loading your portal...</div>;
+  if (loading) {
+    return (
+      <div style={{ padding: 24, display: 'grid', placeItems: 'center', minHeight: '60vh' }}>
+        <LogoSpinner size="lg" label="Loading portal details…" />
+      </div>
+    );
+  }
 
   return (
     <div style={{ padding: 24 }}>
@@ -96,11 +111,7 @@ export default function Portal() {
       ))}
       <PageHeader
         title="Customer portal"
-        subtitle={
-          customer
-            ? `${customer.name}${customer.company ? ' — ' + customer.company : ''}`
-            : 'Your subscriptions and invoices'
-        }
+        subtitle={customer ? `Welcome back, ${customer.name}` : 'Welcome to your customer portal'}
       />
 
       {error && (
@@ -136,6 +147,7 @@ export default function Portal() {
                 { key: 'next_billing_date', label: 'Next billing', render: (r) => r.next_billing_date || '-' },
               ]}
               data={subs}
+              loading={loading}
             />
           </Card>
 
@@ -150,6 +162,7 @@ export default function Portal() {
                 { key: 'due_date', label: 'Due', render: (r) => r.due_date || '-' },
               ]}
               data={invoices}
+              loading={loading}
             />
           </Card>
         </>

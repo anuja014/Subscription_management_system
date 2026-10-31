@@ -18,6 +18,7 @@ export default function InvoiceList() {
   const [invoices, setInvoices] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [filterStatus, setFilterStatus] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => { load(); }, []);
 
@@ -28,14 +29,19 @@ export default function InvoiceList() {
   };
 
   async function load() {
-    const [iRes, cRes] = await Promise.all([
-      supabase.from('invoices').select('*, subscriptions(number), customers(name)').order('created_at', { ascending: false }).limit(100),
-      supabase.from('customers').select('id, name'),
-    ]);
-    if (iRes.error) addToast(iRes.error.message, 'error');
-    else setInvoices(iRes.data || []);
-    if (cRes.error) addToast(cRes.error.message, 'error');
-    else setCustomers(cRes.data || []);
+    setLoading(true);
+    try {
+      const [iRes, cRes] = await Promise.all([
+        supabase.from('invoices').select('*, subscriptions(number), customers(name)').order('created_at', { ascending: false }).limit(100),
+        supabase.from('customers').select('id, name'),
+      ]);
+      if (iRes.error) addToast(iRes.error.message, 'error');
+      else setInvoices(iRes.data || []);
+      if (cRes.error) addToast(cRes.error.message, 'error');
+      else setCustomers(cRes.data || []);
+    } finally {
+      setLoading(false);
+    }
   }
 
   const filtered = invoices.filter((i) => !filterStatus || i.status === filterStatus);
@@ -71,7 +77,7 @@ export default function InvoiceList() {
         <Button variant="primary" onClick={() => navigate('/billing/run')}>Run billing</Button>
       </div>
       <Card>
-        <DataTable columns={columns} data={filtered} />
+        <DataTable columns={columns} data={filtered} loading={loading} />
       </Card>
     </div>
   );

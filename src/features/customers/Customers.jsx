@@ -9,6 +9,7 @@ import { supabase } from '../../lib/supabaseClient';
 export default function Customers() {
   const [toasts, setToasts] = useState([]);
   const [customers, setCustomers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => { load(); }, []);
 
@@ -19,9 +20,14 @@ export default function Customers() {
   };
 
   async function load() {
-    const { data, error } = await supabase.from('customers').select('*').order('created_at', { ascending: false });
-    if (error) addToast(error.message, 'error');
-    else setCustomers(data || []);
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.from('customers').select('*').order('created_at', { ascending: false });
+      if (error) addToast(error.message, 'error');
+      else setCustomers(data || []);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -40,6 +46,7 @@ export default function Customers() {
             { key: 'tax_id', label: 'Tax ID' },
           ]}
           data={customers}
+          loading={loading}
         />
       </Card>
     </div>

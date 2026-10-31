@@ -1,9 +1,10 @@
 // src/components/layout/Sidebar.jsx
-import { useNavigate, useLocation } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import {
   LayoutDashboard, Repeat2, FileText, CreditCard,
   Users, Package, Tags, ReceiptText, FileStack, UserRound,
+  X, ChevronLeft, ChevronRight,
 } from 'lucide-react';
 import logoImg from '../../logo/amber_fly.png';
 
@@ -30,7 +31,7 @@ const navGroups = [
     label: 'Pricing',
     items: [
       { key: 'discounts', label: 'Discounts', to: '/pricing/discounts', roles: ['admin'], icon: ReceiptText },
-      { key: 'taxes', label: 'Taxes', to: '/pricing/taxes', roles: ['admin'], icon: ReceiptText },
+      { key: 'taxes', label: 'Taxes', to: '/pricing/taxes', roles: ['admin', 'staff'], icon: ReceiptText },
       { key: 'templates', label: 'Templates', to: '/pricing/templates', roles: ['admin', 'staff'], icon: FileStack },
     ],
   },
@@ -42,41 +43,82 @@ const navGroups = [
   },
 ];
 
-export default function Sidebar({ open, onToggle }) {
-  const navigate = useNavigate();
+export default function Sidebar({
+  open = false,
+  collapsed = false,
+  onClose,
+  onToggle,
+  onToggleCollapse,
+}) {
   const location = useLocation();
   const { profile } = useAuth();
   const role = profile?.role;
 
-  const isActive = (to) =>
-    location.pathname === to ||
-    (to !== '/dashboard' && to !== '/portal' && location.pathname.startsWith(`${to}/`));
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    } else if (onToggle) {
+      onToggle(false);
+    }
+  };
+
+  const isActive = (to) => {
+    if (to === '/dashboard') {
+      return location.pathname === '/dashboard' || location.pathname === '/';
+    }
+    if (to === '/portal') {
+      return location.pathname === '/portal';
+    }
+    if (to === '/invoices') {
+      return (
+        location.pathname === '/invoices' ||
+        location.pathname.startsWith('/invoices/') ||
+        location.pathname.startsWith('/billing/')
+      );
+    }
+    return (
+      location.pathname === to ||
+      (to !== '/' && location.pathname.startsWith(`${to}/`))
+    );
+  };
 
   return (
     <>
       {/* Mobile overlay */}
       <div
         className={`sidebar-overlay ${open ? 'open' : ''}`}
-        onClick={() => onToggle(false)}
+        onClick={handleClose}
         aria-hidden="true"
       />
 
-      <aside className={`sidebar ${open ? 'open' : ''}`} aria-label="Main navigation">
+      <aside
+        className={`sidebar ${open ? 'open' : ''} ${collapsed ? 'collapsed' : ''}`}
+        aria-label="Main navigation"
+      >
         {/* Brand */}
         <div className="sidebar-brand">
-          <div className="sidebar-logo-wrap">
-            <img src={logoImg} alt="Brightloop" className="sidebar-logo" />
-          </div>
+          <img src={logoImg} alt="Aureon" className="sidebar-brand-logo" title="Aureon Billing" />
           <div className="sidebar-brand-text">
-            <span className="sidebar-brand-name">Brightloop</span>
+            <span className="sidebar-brand-name">Aureon</span>
             <span className="sidebar-brand-badge">Billing</span>
           </div>
+          {/* Mobile close button */}
+          <button
+            type="button"
+            className="sidebar-close-btn"
+            onClick={handleClose}
+            aria-label="Close sidebar"
+          >
+            <X size={18} />
+          </button>
         </div>
 
         {/* Nav */}
         <nav className="sidebar-nav-wrap">
           {navGroups.map((group, gi) => {
-            const visible = group.items.filter((i) => i.roles.includes(role || 'customer'));
+            const visible = group.items.filter((i) =>
+              i.roles.includes(role || 'customer')
+            );
             if (!visible.length) return null;
             return (
               <div key={gi} className="sidebar-group">
@@ -84,19 +126,27 @@ export default function Sidebar({ open, onToggle }) {
                   <div className="sidebar-group-label">{group.label}</div>
                 )}
                 <ul className="sidebar-nav">
-                  {visible.map((item) => (
-                    <li key={item.key}>
-                      <a
-                        href={item.to}
-                        onClick={(e) => { e.preventDefault(); navigate(item.to); onToggle(false); }}
-                        className={isActive(item.to) ? 'active' : ''}
-                      >
-                        <item.icon size={16} strokeWidth={1.8} aria-hidden="true" />
-                        <span>{item.label}</span>
-                        {isActive(item.to) && <span className="nav-active-dot" aria-hidden="true" />}
-                      </a>
-                    </li>
-                  ))}
+                  {visible.map((item) => {
+                    const active = isActive(item.to);
+                    return (
+                      <li key={item.key}>
+                        <NavLink
+                          to={item.to}
+                          title={item.label}
+                          className={`sidebar-nav-item ${active ? 'active' : ''}`}
+                          onClick={() => {
+                            if (window.innerWidth <= 960) {
+                              handleClose();
+                            }
+                          }}
+                        >
+                          <item.icon className="nav-icon" size={18} strokeWidth={1.8} aria-hidden="true" />
+                          <span className="nav-label">{item.label}</span>
+                          {active && <span className="nav-active-dot" aria-hidden="true" />}
+                        </NavLink>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             );
@@ -105,8 +155,21 @@ export default function Sidebar({ open, onToggle }) {
 
         {/* Footer */}
         <div className="sidebar-footer">
-          <div className="sidebar-footer-role">{role || 'member'}</div>
-          <div className="sidebar-footer-copy">© 2025 Brightloop</div>
+          <div className="sidebar-footer-info">
+            <div className="sidebar-footer-role">{role || 'member'}</div>
+            <div className="sidebar-footer-copy">© 2025 Aureon</div>
+          </div>
+          {onToggleCollapse && (
+            <button
+              type="button"
+              className="sidebar-collapse-btn"
+              onClick={onToggleCollapse}
+              title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            >
+              {collapsed ? <ChevronRight size={15} /> : <ChevronLeft size={15} />}
+            </button>
+          )}
         </div>
       </aside>
     </>

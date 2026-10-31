@@ -5,6 +5,7 @@ import { StatCard } from '../../components/ui';
 import { Badge } from '../../components/ui';
 import { PageHeader } from '../../components/ui';
 import { Toast, ToastContainer } from '../../components/ui';
+import { LogoSpinner } from '../../components/ui';
 import { supabase } from '../../lib/supabaseClient';
 
 export default function Dashboard() {
@@ -26,7 +27,13 @@ export default function Dashboard() {
     setTimeout(() => setToasts((ts) => ts.filter((x) => x.id !== n)), 4000);
   };
 
-  if (loading) return <div style={{ padding: 24, textAlign: 'center' }}>Loading dashboard...</div>;
+  if (loading) {
+    return (
+      <div style={{ padding: 24, display: 'grid', placeItems: 'center', minHeight: '60vh' }}>
+        <LogoSpinner size="lg" label="Loading dashboard summary…" />
+      </div>
+    );
+  }
 
   return (
     <div style={{ padding: 24 }}>
