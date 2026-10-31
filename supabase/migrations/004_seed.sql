@@ -148,8 +148,8 @@ begin
   select array_agg(id) into plan_ids from plans;
 
   for i in 1..2000 loop
-    r_cust := cust_ids[1 + (i % array_length(cust_ids,1))];
-    r_plan := plan_ids[1 + (i % array_length(plan_ids,1))];
+    r_cust := cust_ids[1 + ((i - 1) % array_length(cust_ids,1))];
+    r_plan := plan_ids[1 + ((i - 1) % array_length(plan_ids,1))];
     r_start := current_date - (i % 365);
     r_next := current_date - (i % 30);
     r_status := case when i % 4 = 0 then 'closed'
@@ -182,7 +182,7 @@ begin
   select array_agg(id) into sub_ids from subscriptions where status = 'active' limit 500;
 
   for i in 1..500 loop
-    r_sub := sub_ids[1 + (i % array_length(sub_ids,1))];
+    r_sub := sub_ids[1 + ((i - 1) % array_length(sub_ids,1))];
     insert into invoices (number, subscription_id, customer_id, period_start, period_end,
                           status, issue_date, due_date, subtotal, tax_total, total, amount_paid)
     select 'INV-' || lpad(i::text, 6, '0'), id, customer_id, current_date - 30, current_date,

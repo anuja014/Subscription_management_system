@@ -1,5 +1,6 @@
 // src/components/ui/DataTable.jsx
 import { useState } from 'react';
+import { Button } from './Button';
 
 export function DataTable({ columns, data, loading = false, emptyMessage = 'No records found', pageSize = 20, className }) {
   const [page, setPage] = useState(1);
@@ -20,7 +21,7 @@ export function DataTable({ columns, data, loading = false, emptyMessage = 'No r
 
   if (loading) {
     return (
-      <div className="table-wrap ${className || ''}">
+      <div className={`table-wrap ${className || ''}`}>
         <div className="empty-state">
           <div className="skeleton" style={{ height: 120, width: '60%', margin: '0 auto' }} />
           <div className="skeleton" style={{ height: 20, width: '80%', margin: '20px auto' }} />
@@ -31,7 +32,7 @@ export function DataTable({ columns, data, loading = false, emptyMessage = 'No r
 
   if (sorted.length === 0) {
     return (
-      <div className="table-wrap ${className || ''}">
+      <div className={`table-wrap ${className || ''}`}>
         <div className="empty-state">
           <h3>{emptyMessage}</h3>
         </div>
