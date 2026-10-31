@@ -76,6 +76,10 @@ const router = createBrowserRouter([
 
   // Redirect root to dashboard
   { path: '/portal', element: <Portal /> },
-]);
+], {
+  future: {
+    v7_startTransition: true,
+  },
+});
 
 export default router;

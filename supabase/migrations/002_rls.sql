@@ -10,6 +10,8 @@ create or replace function app_current_role()
 returns text
 language plpgsql
 stable
+security definer
+set search_path = public
 as $$
 declare
   r text;

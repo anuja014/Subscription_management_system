@@ -7,33 +7,63 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
+  const [profileError, setProfileError] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    let mounted = true;
+
+    async function initializeSession() {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (!mounted) return;
+
+      if (error) {
+        console.error('Unable to restore the current session:', error);
+        setProfileError(error);
+      }
+
       setUser(session?.user ?? null);
-      if (session?.user) loadProfile(session.user.id);
-      setLoading(false);
-    });
+      if (session?.user) await loadProfile(session.user.id);
+      if (mounted) setLoading(false);
+    }
+
+    initializeSession();
 
     // Listen for auth changes
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
-      if (session?.user) loadProfile(session.user.id);
-      else setProfile(null);
+      if (event === 'INITIAL_SESSION') return;
+      if (session?.user) {
+        loadProfile(session.user.id);
+      } else {
+        setProfile(null);
+        setProfileError(null);
+      }
     });
 
-    return () => sub.subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      sub.subscription.unsubscribe();
+    };
   }, []);
 
   async function loadProfile(uid) {
-    const { data } = await supabase
+    setProfileError(null);
+    const { data, error } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', uid)
       .single();
+
+    if (error) {
+      console.error('Unable to load the user profile:', error);
+      setProfile(null);
+      setProfileError(error);
+      return null;
+    }
+
     setProfile(data ?? null);
+    return data;
   }
 
   async function signUp({ email, password, full_name }) {
@@ -78,11 +108,12 @@ export function AuthProvider({ children }) {
   }
 
   const isAdmin = profile ? profile.role === 'admin' : false;
-  const isStaff = profile ? profile.role in ('admin', 'staff') : false;
+  const isStaff = profile ? ['admin', 'staff'].includes(profile.role) : false;
 
   const value = {
     user,
     profile,
+    profileError,
     loading,
     isAdmin,
     isStaff,
