@@ -1,4 +1,10 @@
 node_modules/
-dist/
 .env
+.env.local
+dist/
+build/
+.idea/
+.vscode/
+*.log
 .DS_Store
+supabase/.temp/

@@ -1,0 +1,78 @@
+/* src/styles/tokens.css
+   Design tokens for Brightloop Billing.
+   Rule: colours and spacing only through variables here. No hardcoded colours in JSX.
+   Owner: Member 1 edits this file. Others request changes in team chat.
+*/
+
+:root {
+  /* --- Dark theme (default) --- */
+  --bg: #0B0F14;
+  --surface: #121821;
+  --surface-2: #18202B;
+  --border: #243041;
+  --text: #E6EAF0;
+  --text-muted: #8A97A8;
+  --accent: #2DD4A8;
+  --accent-hover: #1FB78B;
+  --success: #34D399;
+  --warning: #F5B54A;
+  --danger: #F26D6D;
+  --info: #5AA9F0;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  --font-sans: 'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'IBM Plex Mono', 'SF Mono', Menlo, monospace;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.35);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+
+  --transition: 150ms ease;
+}
+
+html[data-theme='light'] {
+  /* --- Light theme --- */
+  --bg: #F6F7F9;
+  --surface: #FFFFFF;
+  --surface-2: #EEF1F5;
+  --border: #DDE2E9;
+  --text: #10151C;
+  --text-muted: #5B6676;
+  --accent: #0E9F7E;
+  --accent-hover: #0C8A6B;
+  --success: #15803D;
+  --warning: #B45309;
+  --danger: #B91C1C;
+  --info: #1D6FBF;
+
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Tabular numerals for IDs and amounts */
+.mono, .mono-nums {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}

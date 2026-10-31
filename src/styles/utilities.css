@@ -1,0 +1,41 @@
+/* src/styles/utilities.css
+   Small helpers: .stack, .row, .grow, .text-muted, .mono, etc.
+   Owner: Member 1.
+*/
+
+.stack { display: flex; flex-direction: column; gap: var(--space-3); }
+.row { display: flex; align-items: center; gap: var(--space-2); }
+.row--between { display: flex; align-items: center; justify-content: space-between; }
+.grow { flex: 1; }
+
+.text-muted { color: var(--text-muted); font-size: 12px; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.font-mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+.flex { display: flex; }
+.flex-col { display: flex; flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.justify-center { justify-content: center; }
+.gap-2 { gap: var(--space-2); }
+.gap-3 { gap: var(--space-3); }
+.gap-4 { gap: var(--space-4); }
+
+.mb-2 { margin-bottom: var(--space-2); }
+.mb-3 { margin-bottom: var(--space-3); }
+.mb-4 { margin-bottom: var(--space-4); }
+.mt-3 { margin-top: var(--space-3); }
+.mt-4 { margin-top: var(--space-4); }
+
+.block { display: block; }
+.hidden { display: none !important; }
+
+.w-full { width: 100%; }
+.max-w-page { max-width: 1280px; margin: 0 auto; }
+
+.radius-sm { border-radius: var(--radius-sm); }
+.radius-md { border-radius: var(--radius-md); }
+
+.border { border: 1px solid var(--border); }
+.shadow-sm { box-shadow: var(--shadow-sm); }
