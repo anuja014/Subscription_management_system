@@ -8,6 +8,7 @@ import { FormField } from '../../components/ui';
 import { Card } from '../../components/ui';
 import { Badge } from '../../components/ui';
 import { signupSchema, passwordStrengthChecks } from '../../lib/validators';
+import logoImg from '../../logo/amber_fly.png';
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -37,7 +38,7 @@ export default function Signup() {
   return (
     <main className="auth-shell">
       <Card className="auth-card">
-        <div className="auth-mark">AU</div>
+        <div className="auth-brand"><img src={logoImg} alt="Aureon" /><span>Aureon</span></div>
         <h2 style={{ marginBottom: 8, fontSize: 24 }}>Create account</h2>
         <p style={{ color: 'var(--text-muted)', fontSize: 14, marginBottom: 24 }}>Join Aureon Billing</p>
         {error && <div style={{ color: 'var(--danger)', fontSize: 13, marginBottom: 16, padding: 8, background: 'var(--danger-soft)', borderRadius: 6 }}>{error}</div>}

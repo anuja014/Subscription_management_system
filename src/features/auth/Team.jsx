@@ -48,14 +48,20 @@ export default function Team() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-    const { data, error } = await createStaff({ email: form.email, full_name: form.full_name, password: form.password });
-    if (error) addToast(error.message, 'error');
-    else {
-      addToast('Staff member created', 'success');
-      setForm({ email: '', full_name: '', password: '' });
-      loadStaff();
+    try {
+      const { error } = await createStaff({ email: form.email, full_name: form.full_name, password: form.password });
+      if (error) {
+        addToast(error.message, 'error');
+      } else {
+        addToast('Staff member created', 'success');
+        setForm({ email: '', full_name: '', password: '' });
+        loadStaff();
+      }
+    } catch (error) {
+      addToast(error instanceof Error ? error.message : 'Unable to create staff account', 'error');
+    } finally {
+      setSubmitting(false);
     }
-    setSubmitting(false);
   };
 
   if (!isAdmin) return <div style={{ padding: 40, textAlign: 'center' }}>Admin only</div>;

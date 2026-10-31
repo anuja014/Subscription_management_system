@@ -6,6 +6,7 @@ import { Button } from '../../components/ui';
 import { Input } from '../../components/ui';
 import { FormField } from '../../components/ui';
 import { Card } from '../../components/ui';
+import logoImg from '../../logo/amber_fly.png';
 
 export default function ForgotPassword() {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ export default function ForgotPassword() {
     return (
       <main className="auth-shell">
         <Card className="auth-card auth-card--centered">
-          <div className="auth-mark">AU</div>
+          <div className="auth-brand"><img src={logoImg} alt="Aureon" /><span>Aureon</span></div>
           <h2 style={{ marginBottom: 8, fontSize: 24 }}>Check your email</h2>
           <p style={{ color: 'var(--text-muted)', fontSize: 14, marginBottom: 24 }}>A password reset link has been sent to {email}</p>
           <Button variant="primary" onClick={() => navigate('/login')} className="w-full" style={{ width: '100%' }}>Back to sign in</Button>
@@ -43,7 +44,7 @@ export default function ForgotPassword() {
   return (
     <main className="auth-shell">
       <Card className="auth-card">
-        <div className="auth-mark">BL</div>
+        <div className="auth-brand"><img src={logoImg} alt="Aureon" /><span>Aureon</span></div>
         <h2 style={{ marginBottom: 8, fontSize: 24 }}>Forgot password</h2>
         <p style={{ color: 'var(--text-muted)', fontSize: 14, marginBottom: 24 }}>Enter your email to reset your password</p>
         {error && <div style={{ color: 'var(--danger)', fontSize: 13, marginBottom: 16, padding: 8, background: 'var(--danger-soft)', borderRadius: 6 }}>{error}</div>}

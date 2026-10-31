@@ -101,10 +101,55 @@ export function AuthProvider({ children }) {
   }
 
   async function createStaff({ email, full_name, password }) {
-    const { data, error } = await supabase.functions.invoke('create-staff', {
-      body: { email, full_name, password },
-    });
-    return { data, error };
+    try {
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !sessionData.session) {
+        return { data: null, error: new Error('Your session has expired. Please sign in again.') };
+      }
+
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-staff`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${sessionData.session.access_token}`,
+          apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, full_name, password }),
+      });
+
+      const responseText = await response.text();
+      let responseBody = {};
+      try {
+        responseBody = responseText ? JSON.parse(responseText) : {};
+      } catch {
+        responseBody = {};
+      }
+
+      if (!response.ok) {
+        const message = responseBody.error || responseBody.message || `Staff creation failed (${response.status})`;
+        if (response.status === 404) {
+          return {
+            data: null,
+            error: new Error('The create-staff Edge Function is not deployed to this Supabase project.'),
+          };
+        }
+        return { data: null, error: new Error(message) };
+      }
+
+      return { data: responseBody, error: null };
+    } catch (error) {
+      if (error instanceof TypeError && error.message === 'Failed to fetch') {
+        return {
+          data: null,
+          error: new Error('Cannot reach Supabase create-staff. Deploy the Edge Function and verify the Supabase URL, CORS, and network connection.'),
+        };
+      }
+
+      return {
+        data: null,
+        error: error instanceof Error ? error : new Error('Unable to create staff account'),
+      };
+    }
   }
 
   const isAdmin = profile ? profile.role === 'admin' : false;
