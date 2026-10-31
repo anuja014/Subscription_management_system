@@ -35,11 +35,12 @@ export default function Signup() {
   };
 
   return (
-    <div style={{ maxWidth: 420, margin: '6vh auto', padding: 16 }}>
-      <Card style={{ padding: 32 }}>
+    <main className="auth-shell">
+      <Card className="auth-card">
+        <div className="auth-mark">BL</div>
         <h2 style={{ marginBottom: 8, fontSize: 24 }}>Create account</h2>
-        <p style={{ color: '#8A97A8', fontSize: 14, marginBottom: 24 }}>Join Brightloop Billing</p>
-        {error && <div style={{ color: '#F26D6D', fontSize: 13, marginBottom: 16, padding: 8, background: 'rgba(242,109,109,0.1)', borderRadius: 6 }}>{error}</div>}
+        <p style={{ color: 'var(--text-muted)', fontSize: 14, marginBottom: 24 }}>Join Brightloop Billing</p>
+        {error && <div style={{ color: 'var(--danger)', fontSize: 13, marginBottom: 16, padding: 8, background: 'var(--danger-soft)', borderRadius: 6 }}>{error}</div>}
         <form onSubmit={handleSubmit}>
           <FormField label="Full name">
             <Input id="full_name" type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
@@ -50,7 +51,7 @@ export default function Signup() {
           <FormField label="Password">
             <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
             <div style={{ marginTop: 10 }}>
-              <strong style={{ fontSize: 12, color: '#8A97A8' }}>Password rules:</strong>
+              <strong style={{ fontSize: 12, color: 'var(--text-muted)' }}>Password rules:</strong>
               <div style={{ display: 'flex', gap: 8, marginTop: 6 }}>
                 <Badge variant={strength.length ? 'success' : 'info'} style={{ padding: '2px 8px', fontSize: 11 }}>More than 8 chars</Badge>
                 <Badge variant={strength.uppercase ? 'success' : 'info'} style={{ padding: '2px 8px', fontSize: 11 }}>Uppercase</Badge>
@@ -63,10 +64,10 @@ export default function Signup() {
             {submitting ? 'Creating account...' : 'Create account'}
           </Button>
         </form>
-        <p style={{ marginTop: 20, fontSize: 13, color: '#8A97A8', textAlign: 'center' }}>
-          Already have an account? <a href="/login" style={{ color: '#2DD4A8', fontWeight: 600 }}>Sign in</a>
+        <p style={{ marginTop: 20, fontSize: 13, color: 'var(--text-muted)', textAlign: 'center' }}>
+          Already have an account? <a href="/login" style={{ color: 'var(--link)', fontWeight: 600 }}>Sign in</a>
         </p>
       </Card>
-    </div>
+    </main>
   );
 }

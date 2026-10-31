@@ -135,7 +135,7 @@ export default function Templates() {
           <FormField label="Validity days">
             <Input type="number" value={form.validity_days} onChange={(e) => setForm({ ...form, validity_days: e.target.value })} required />
           </FormField>
-          <div style={{ fontWeight: 600, fontSize: 12, color: '#8A97A8', marginBottom: 8 }}>Template lines</div>
+          <div style={{ fontWeight: 600, fontSize: 12, color: 'var(--text-muted)', marginBottom: 8 }}>Template lines</div>
           {lines.map((l, i) => (
             <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 6 }}>
               <Select value={l.product_id} onChange={(v) => { const n = [...lines]; n[i] = { ...n[i], product_id: v }; setLines(n); }} options={products.map((p) => ({ value: p.id, label: p.name }))} style={{ flex: 1 }} />

@@ -24,6 +24,9 @@
   overflow-x: auto;
 }
 
+.dashboard-grid { margin-bottom: var(--space-5); }
+.dashboard-table-wrap { padding: var(--space-5); box-shadow: var(--shadow-sm); }
+
 @media (max-width: 960px) {
   .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
   .dashboard-section { grid-template-columns: 1fr; }

@@ -1,24 +1,26 @@
 // src/components/layout/Sidebar.jsx
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { LayoutDashboard, Repeat2, FileText, CreditCard, Users, Package, Tags, ReceiptText, FileStack, UserRound } from 'lucide-react';
 
 const navItems = [
-  { key: 'portal', label: 'My Portal', to: '/portal', roles: ['customer'] },
-  { key: 'dashboard', label: 'Dashboard', to: '/dashboard', roles: ['admin', 'staff'] },
-  { key: 'subscriptions', label: 'Subscriptions', to: '/subscriptions', roles: ['admin', 'staff'] },
-  { key: 'invoices', label: 'Invoices', to: '/invoices', roles: ['admin', 'staff'] },
-  { key: 'payments', label: 'Payments', to: '/payments', roles: ['admin', 'staff'] },
-  { key: 'customers', label: 'Customers', to: '/customers', roles: ['admin', 'staff'] },
-  { key: 'products', label: 'Products', to: '/catalog/products', roles: ['admin', 'staff'] },
-  { key: 'plans', label: 'Plans', to: '/catalog/plans', roles: ['admin', 'staff'] },
-  { key: 'discounts', label: 'Discounts', to: '/pricing/discounts', roles: ['admin'] },
-  { key: 'taxes', label: 'Taxes', to: '/pricing/taxes', roles: ['admin'] },
-  { key: 'templates', label: 'Templates', to: '/pricing/templates', roles: ['admin', 'staff'] },
-  { key: 'team', label: 'Team', to: '/team', roles: ['admin'] },
+  { key: 'portal', label: 'My Portal', to: '/portal', roles: ['customer'], icon: UserRound },
+  { key: 'dashboard', label: 'Overview', to: '/dashboard', roles: ['admin', 'staff'], icon: LayoutDashboard },
+  { key: 'subscriptions', label: 'Subscriptions', to: '/subscriptions', roles: ['admin', 'staff'], icon: Repeat2 },
+  { key: 'invoices', label: 'Invoices', to: '/invoices', roles: ['admin', 'staff'], icon: FileText },
+  { key: 'payments', label: 'Payments', to: '/payments', roles: ['admin', 'staff'], icon: CreditCard },
+  { key: 'customers', label: 'Customers', to: '/customers', roles: ['admin', 'staff'], icon: Users },
+  { key: 'products', label: 'Products', to: '/catalog/products', roles: ['admin', 'staff'], icon: Package },
+  { key: 'plans', label: 'Plans', to: '/catalog/plans', roles: ['admin', 'staff'], icon: Tags },
+  { key: 'discounts', label: 'Discounts', to: '/pricing/discounts', roles: ['admin'], icon: ReceiptText },
+  { key: 'taxes', label: 'Taxes', to: '/pricing/taxes', roles: ['admin'], icon: ReceiptText },
+  { key: 'templates', label: 'Templates', to: '/pricing/templates', roles: ['admin', 'staff'], icon: FileStack },
+  { key: 'team', label: 'Team', to: '/team', roles: ['admin'], icon: Users },
 ];
 
 export default function Sidebar({ open, onToggle }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { profile } = useAuth();
   const role = profile?.role;
 
@@ -33,16 +35,17 @@ export default function Sidebar({ open, onToggle }) {
             <a
               href={item.to}
               onClick={(e) => { e.preventDefault(); navigate(item.to); onToggle(false); }}
-              className={''}
+              className={location.pathname === item.to || (item.to !== '/dashboard' && location.pathname.startsWith(`${item.to}/`)) ? 'active' : ''}
             >
+              <item.icon size={16} strokeWidth={1.8} aria-hidden="true" />
               {item.label}
             </a>
           </li>
         ))}
       </ul>
       <div className="sidebar-footer">
-        <div style={{ fontWeight: 600, fontSize: 12, color: '#E6EAF0' }}>{role}</div>
-        <div style={{ fontSize: 11, color: '#8A97A8', marginTop: 2 }}>Brightloop Billing</div>
+        <div className="sidebar-role">{role || 'member'}</div>
+        <div>Brightloop Billing</div>
       </div>
     </aside>
   );

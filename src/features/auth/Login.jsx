@@ -29,11 +29,12 @@ export default function Login() {
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: '8vh auto', padding: 16 }}>
-      <Card style={{ padding: 32 }}>
+    <main className="auth-shell">
+      <Card className="auth-card">
+        <div className="auth-mark">BL</div>
         <h2 style={{ marginBottom: 8, fontSize: 24 }}>Welcome back</h2>
-        <p style={{ color: '#8A97A8', fontSize: 14, marginBottom: 24 }}>Sign in to your Brightloop account</p>
-        {error && <div style={{ color: '#F26D6D', fontSize: 13, marginBottom: 16, padding: 8, background: 'rgba(242,109,109,0.1)', borderRadius: 6 }}>{error}</div>}
+        <p style={{ color: 'var(--text-muted)', fontSize: 14, marginBottom: 24 }}>Sign in to your Brightloop account</p>
+        {error && <div style={{ color: 'var(--danger)', fontSize: 13, marginBottom: 16, padding: 8, background: 'var(--danger-soft)', borderRadius: 6 }}>{error}</div>}
         <form onSubmit={handleSubmit}>
           <FormField label="Email">
             <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
@@ -45,13 +46,13 @@ export default function Login() {
             {submitting ? 'Signing in...' : 'Sign in'}
           </Button>
         </form>
-        <p style={{ marginTop: 20, fontSize: 13, color: '#8A97A8', textAlign: 'center' }}>
-          Don't have an account? <a href="/signup" style={{ color: '#2DD4A8', fontWeight: 600 }}>Sign up</a>
+        <p style={{ marginTop: 20, fontSize: 13, color: 'var(--text-muted)', textAlign: 'center' }}>
+          Don't have an account? <a href="/signup" style={{ color: 'var(--link)', fontWeight: 600 }}>Sign up</a>
         </p>
-        <p style={{ marginTop: 8, fontSize: 13, color: '#8A97A8', textAlign: 'center' }}>
-          <a href="/forgot-password" style={{ color: '#2DD4A8', fontWeight: 600 }}>Forgot password?</a>
+        <p style={{ marginTop: 8, fontSize: 13, color: 'var(--text-muted)', textAlign: 'center' }}>
+          <a href="/forgot-password" style={{ color: 'var(--link)', fontWeight: 600 }}>Forgot password?</a>
         </p>
       </Card>
-    </div>
+    </main>
   );
 }

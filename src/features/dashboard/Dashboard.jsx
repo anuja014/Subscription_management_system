@@ -44,11 +44,11 @@ export default function Dashboard() {
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 24 }}>
         <Card>
           <h3 style={{ marginBottom: 12, fontSize: 16 }}>Overdue invoices</h3>
-          <div style={{ fontSize: 13, color: '#8A97A8' }}>Configure dashboard_summary() to return overdue list, or fetch invoices with status=confirmed and due_date &lt; today.</div>
+          <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Configure dashboard_summary() to return overdue list, or fetch invoices with status=confirmed and due_date &lt; today.</div>
         </Card>
         <Card>
           <h3 style={{ marginBottom: 12, fontSize: 16 }}>Recent activity</h3>
-          <div style={{ fontSize: 13, color: '#8A97A8' }}>Charts render via Recharts. Connect to dashboard_summary() for revenue by month, subscriptions by status, payments by method.</div>
+          <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>Charts render via Recharts. Connect to dashboard_summary() for revenue by month, subscriptions by status, payments by method.</div>
         </Card>
       </div>
     </div>
