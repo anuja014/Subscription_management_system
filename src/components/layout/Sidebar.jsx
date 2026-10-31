@@ -1,6 +1,6 @@
 // src/components/layout/Sidebar.jsx
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 
 const navItems = [
   { key: 'dashboard', label: 'Dashboard', to: '/dashboard', roles: ['admin', 'staff'] },
@@ -40,8 +40,8 @@ export default function Sidebar({ open, onToggle }) {
         ))}
       </ul>
       <div className="sidebar-footer">
-        <div style={{ fontWeight: 600, fontSize: 12px, color: '#E6EAF0' }}>{role}</div>
-        <div style={{ fontSize: 11px, color: '#8A97A8', marginTop: 2 }}>Brightloop Billing</div>
+        <div style={{ fontWeight: 600, fontSize: 12, color: '#E6EAF0' }}>{role}</div>
+        <div style={{ fontSize: 11, color: '#8A97A8', marginTop: 2 }}>Brightloop Billing</div>
       </div>
     </aside>
   );

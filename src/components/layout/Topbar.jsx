@@ -1,8 +1,8 @@
 // src/components/layout/Topbar.jsx
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { Button } from '../components/ui';
+import { useAuth } from '../../context/AuthContext';
+import { Button } from '../ui';
 
 export default function Topbar({ sidebarOpen, setSidebarOpen, signOut, profile }) {
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
