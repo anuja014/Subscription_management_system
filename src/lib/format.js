@@ -42,15 +42,15 @@ export function relativeTime(date) {
 // Status badge mapping
 export function statusBadgeClass(status) {
   const map = {
-    draft: 'badge--info',
-    quotation: 'badge--warning',
-    confirmed: 'badge--info',
-    active: 'badge--success',
-    closed: 'badge--danger',
-    paid: 'badge--success',
-    cancelled: 'badge--danger',
+    draft: 'info',
+    quotation: 'warning',
+    confirmed: 'info',
+    active: 'success',
+    closed: 'danger',
+    paid: 'success',
+    cancelled: 'danger',
   };
-  return map[status] || 'badge--info';
+  return map[status] || 'info';
 }
 
 export function statusLabel(status) {

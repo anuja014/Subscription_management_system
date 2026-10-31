@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 const navItems = [
+  { key: 'portal', label: 'My Portal', to: '/portal', roles: ['customer'] },
   { key: 'dashboard', label: 'Dashboard', to: '/dashboard', roles: ['admin', 'staff'] },
   { key: 'subscriptions', label: 'Subscriptions', to: '/subscriptions', roles: ['admin', 'staff'] },
   { key: 'invoices', label: 'Invoices', to: '/invoices', roles: ['admin', 'staff'] },
