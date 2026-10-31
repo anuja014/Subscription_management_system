@@ -1,10 +1,7 @@
 -- 003a_discount_rules.sql
 -- Discount helper function used by run_billing()
--- Owner: Member 2 (Pricing)
 -- Run AFTER 001_schema.sql and 002_rls.sql
 
--- Returns all valid discounts applicable to a subscription on a given date.
--- Signature: valid_discounts_for(subscription_id uuid, check_date date) returns setof discounts
 create or replace function valid_discounts_for(p_subscription_id uuid, p_check_date date)
 returns setof discounts
 language plpgsql
@@ -14,7 +11,6 @@ declare
   v_sub_total numeric(12,2);
   v_sub_qty int;
 begin
-  -- Get subscription total and quantity for min checks
   select coalesce(sum(amount),0), coalesce(sum(quantity),0)
   into v_sub_total, v_sub_qty
   from subscription_lines where subscription_id = p_subscription_id;

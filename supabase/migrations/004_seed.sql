@@ -1,31 +1,66 @@
 -- 004_seed.sql
 -- Demo seed data
--- Owner: Member 4 (Dashboard, Portal, Demo Data)
--- Run AFTER 001_schema.sql and 002_rls.sql
+-- Run AFTER 001_schema.sql, 002_rls.sql, 003a_discount_rules.sql, 003_billing.sql
+-- PREREQUISITE: Create these 3 users in Supabase Authentication first:
+--   admin@brightloop.test
+--   staff@brightloop.test
+--   customer@brightloop.test
 -- WARNING: This inserts seed data. Do not run on production.
 
 -- ============================================================
--- Staff profiles (created via create-staff Edge Function normally;
--- here we seed directly for demo speed)
+-- Staff profiles (link to existing auth.users by email)
 -- ============================================================
-insert into profiles (id, full_name, email, role, phone)
-values
-  ('11111111-1111-1111-1111-111111111111','Admin User','admin@brightloop.test','admin','+1-555-0100'),
-  ('22222222-2222-2222-2222-222222222222','Staff Rep','staff@brightloop.test','staff','+1-555-0101'),
-  ('33333333-3333-3333-3333-333333333333','Customer One','customer@brightloop.test','customer','+1-555-0102')
-on conflict (id) do nothing;
+DO $$
+DECLARE
+    v_admin_id uuid;
+    v_staff_id uuid;
+    v_customer_id uuid;
+BEGIN
+    SELECT id INTO v_admin_id FROM auth.users WHERE email = 'admin@brightloop.test';
+    SELECT id INTO v_staff_id FROM auth.users WHERE email = 'staff@brightloop.test';
+    SELECT id INTO v_customer_id FROM auth.users WHERE email = 'customer@brightloop.test';
+
+    IF v_admin_id IS NOT NULL THEN
+        INSERT INTO profiles (id, full_name, email, role, phone)
+        VALUES (v_admin_id, 'Admin User', 'admin@brightloop.test', 'admin', '+1-555-0100')
+        ON CONFLICT (id) DO UPDATE SET
+            full_name = EXCLUDED.full_name,
+            email = EXCLUDED.email,
+            role = EXCLUDED.role,
+            phone = EXCLUDED.phone;
+    END IF;
+
+    IF v_staff_id IS NOT NULL THEN
+        INSERT INTO profiles (id, full_name, email, role, phone)
+        VALUES (v_staff_id, 'Staff Rep', 'staff@brightloop.test', 'staff', '+1-555-0101')
+        ON CONFLICT (id) DO UPDATE SET
+            full_name = EXCLUDED.full_name,
+            email = EXCLUDED.email,
+            role = EXCLUDED.role,
+            phone = EXCLUDED.phone;
+    END IF;
+
+    IF v_customer_id IS NOT NULL THEN
+        INSERT INTO profiles (id, full_name, email, role, phone)
+        VALUES (v_customer_id, 'Customer One', 'customer@brightloop.test', 'customer', '+1-555-0102')
+        ON CONFLICT (id) DO UPDATE SET
+            full_name = EXCLUDED.full_name,
+            email = EXCLUDED.email,
+            role = EXCLUDED.role,
+            phone = EXCLUDED.phone;
+    END IF;
+END $$;
 
 -- ============================================================
 -- Customers
 -- ============================================================
 insert into customers (id, profile_id, name, email, company, address, tax_id)
 values
-  (gen_random_uuid(), '33333333-3333-3333-3333-333333333333','Customer One','customer@brightloop.test','Acme Corp','123 Main St','TAX-001'),
+  (gen_random_uuid(), (select id from profiles where email = 'customer@brightloop.test' limit 1), 'Customer One','customer@brightloop.test','Acme Corp','123 Main St','TAX-001'),
   (gen_random_uuid(), null,'Beta Logistics','ops@beta.test','Beta Logistics','456 Oak Ave','TAX-002'),
   (gen_random_uuid(), null,'Gamma Design','hello@gamma.test','Gamma Design','789 Pine Rd','TAX-003'),
   (gen_random_uuid(), null,'Delta Retail','billing@delta.test','Delta Retail','321 Elm St','TAX-004'),
-  (gen_random_uuid(), null,'Epsilon Services','pay@epsilon.test','Epsilon Services','654 Maple Dr','TAX-005')
-on conflict (id) do nothing;
+  (gen_random_uuid(), null,'Epsilon Services','pay@epsilon.test','Epsilon Services','654 Maple Dr','TAX-005');
 
 -- ============================================================
 -- Products
@@ -134,6 +169,8 @@ end $$;
 
 -- ============================================================
 -- Seed some invoices and payments
+-- NOTE: 'overdue' is not a stored status. It is computed from
+-- status='confirmed' + due_date < today + amount_paid < total.
 -- ============================================================
 do $$
 declare
@@ -150,7 +187,7 @@ begin
                           status, issue_date, due_date, subtotal, tax_total, total, amount_paid)
     select 'INV-' || lpad(i::text, 6, '0'), id, customer_id, current_date - 30, current_date,
            case when i % 5 = 0 then 'paid'
-                when i % 5 = 1 then 'overdue'::text
+                when i % 5 = 1 then 'confirmed'
                 when i % 5 = 2 then 'confirmed'
                 else 'draft' end,
            current_date - 30, current_date - 15,

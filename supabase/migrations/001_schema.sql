@@ -1,7 +1,6 @@
 -- 001_schema.sql
 -- Core schema for Brightloop Billing
--- Owner: Member 1 (Foundation)
--- Run this FIRST on your Supabase project
+-- Run FIRST (safe to re-run; uses IF NOT EXISTS / DROP TRIGGER IF EXISTS)
 
 -- Enable extensions
 create extension if not exists pgcrypto;
@@ -246,7 +245,9 @@ begin
                         'discounts','quotation_templates','quotation_template_lines',
                         'subscriptions','invoices')
   loop
-    execute format('create trigger if not exists %I_updated_at before update on %I for each row execute function set_updated_at()', tbl, tbl);
+    execute format('drop trigger if exists %I_updated_at on %I; '
+                   || 'create trigger %I_updated_at before update on %I for each row execute function set_updated_at()',
+                   tbl, tbl, tbl, tbl);
   end loop;
 end $$;
 

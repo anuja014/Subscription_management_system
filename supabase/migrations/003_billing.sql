@@ -1,6 +1,5 @@
 -- 003_billing.sql
 -- Billing engine: run_billing() RPC, number sequences, status triggers
--- Owner: Member 3 (Subscriptions & Invoicing)
 -- Run AFTER 001_schema.sql, 002_rls.sql, 003a_discount_rules.sql
 
 -- ============================================================
@@ -56,10 +55,14 @@ begin
 end;
 $$;
 
-create trigger trg_subscription_transition
-before update of status on subscriptions
-for each row
-execute function validate_subscription_transition();
+do $$
+begin
+  drop trigger if exists trg_subscription_transition on subscriptions;
+  create trigger trg_subscription_transition
+  before update of status on subscriptions
+  for each row
+  execute function validate_subscription_transition();
+end $$;
 
 -- ============================================================
 -- run_billing() RPC
@@ -187,5 +190,4 @@ begin
 end;
 $$;
 
--- Grant execute on the RPC to authenticated users
 grant execute on function run_billing(date) to authenticated;

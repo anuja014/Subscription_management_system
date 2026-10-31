@@ -1,9 +1,7 @@
 -- 004b_dashboard.sql
 -- Dashboard RPC and performance indexes
--- Owner: Member 4 (Dashboard)
 -- Run AFTER 001_schema.sql and 002_rls.sql
 
--- Dashboard summary RPC: single query returning counts and sums
 create or replace function dashboard_summary(p_from date default null, p_to date default null)
 returns json language plpgsql stable as $$
 declare

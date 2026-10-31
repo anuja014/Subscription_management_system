@@ -1,10 +1,12 @@
 -- 002_rls.sql
 -- Row Level Security policies
--- Owner: Member 1 (Foundation)
 -- Run AFTER 001_schema.sql
 
+-- ============================================================
 -- Helper function: current role of the logged-in user
-create or replace function current_role()
+-- Renamed from current_role() because that is a built-in Postgres function.
+-- ============================================================
+create or replace function app_current_role()
 returns text
 language plpgsql
 stable
@@ -30,16 +32,14 @@ create policy "profiles_update_own" on profiles
   for update using (auth.uid() = id);
 
 create policy "profiles_select_admin_staff" on profiles
-  for select using (current_role() in ('admin','staff'));
+  for select using (app_current_role() in ('admin','staff'));
 
 -- ============================================================
 -- customers
 -- ============================================================
--- Admins and staff see all customers
 create policy "customers_all_admin_staff" on customers
-  for all using (current_role() in ('admin','staff'));
+  for all using (app_current_role() in ('admin','staff'));
 
--- Customers see their own linked customer record
 create policy "customers_select_own" on customers
   for select using (
     profile_id = auth.uid() or
@@ -50,14 +50,12 @@ create policy "customers_select_own" on customers
 -- ============================================================
 -- products / variants / plans / taxes (catalog)
 -- ============================================================
--- Admins and staff: full access
-create policy "products_all_admin_staff" on products for all using (current_role() in ('admin','staff'));
-create policy "product_variants_all_admin_staff" on product_variants for all using (current_role() in ('admin','staff'));
-create policy "plans_all_admin_staff" on plans for all using (current_role() in ('admin','staff'));
-create policy "taxes_all_admin_staff" on taxes for all using (current_role() in ('admin','staff'));
-create policy "product_taxes_all_admin_staff" on product_taxes for all using (current_role() in ('admin','staff'));
+create policy "products_all_admin_staff" on products for all using (app_current_role() in ('admin','staff'));
+create policy "product_variants_all_admin_staff" on product_variants for all using (app_current_role() in ('admin','staff'));
+create policy "plans_all_admin_staff" on plans for all using (app_current_role() in ('admin','staff'));
+create policy "taxes_all_admin_staff" on taxes for all using (app_current_role() in ('admin','staff'));
+create policy "product_taxes_all_admin_staff" on product_taxes for all using (app_current_role() in ('admin','staff'));
 
--- Everyone (including customer) can view active catalog
 create policy "products_select_public" on products for select using (is_active = true);
 create policy "product_variants_select_public" on product_variants for select using (
   exists (select 1 from products p where p.id = product_id and p.is_active = true)
@@ -69,8 +67,8 @@ create policy "product_taxes_select_public" on product_taxes for select using (t
 -- ============================================================
 -- discounts
 -- ============================================================
-create policy "discounts_all_admin" on discounts for all using (current_role() = 'admin');
-create policy "discount_products_all_admin" on discount_products for all using (current_role() = 'admin');
+create policy "discounts_all_admin" on discounts for all using (app_current_role() = 'admin');
+create policy "discount_products_all_admin" on discount_products for all using (app_current_role() = 'admin');
 create policy "discounts_select_public" on discounts for select using (
   is_active = true and start_date <= current_date and end_date >= current_date
 );
@@ -78,14 +76,14 @@ create policy "discounts_select_public" on discounts for select using (
 -- ============================================================
 -- quotation templates
 -- ============================================================
-create policy "quotation_templates_all_admin_staff" on quotation_templates for all using (current_role() in ('admin','staff'));
-create policy "quotation_template_lines_all_admin_staff" on quotation_template_lines for all using (current_role() in ('admin','staff'));
+create policy "quotation_templates_all_admin_staff" on quotation_templates for all using (app_current_role() in ('admin','staff'));
+create policy "quotation_template_lines_all_admin_staff" on quotation_template_lines for all using (app_current_role() in ('admin','staff'));
 create policy "quotation_templates_select_public" on quotation_templates for select using (true);
 
 -- ============================================================
 -- subscriptions
 -- ============================================================
-create policy "subscriptions_all_admin_staff" on subscriptions for all using (current_role() in ('admin','staff'));
+create policy "subscriptions_all_admin_staff" on subscriptions for all using (app_current_role() in ('admin','staff'));
 
 create policy "subscriptions_select_own" on subscriptions
   for select using (
@@ -96,14 +94,14 @@ create policy "subscriptions_select_own" on subscriptions
 
 create policy "subscriptions_insert_own" on subscriptions
   for insert with check (
-    current_role() in ('admin','staff') or
+    app_current_role() in ('admin','staff') or
     customer_id in (select id from customers where profile_id = auth.uid())
   );
 
 -- ============================================================
 -- subscription_lines
 -- ============================================================
-create policy "subscription_lines_all_admin_staff" on subscription_lines for all using (current_role() in ('admin','staff'));
+create policy "subscription_lines_all_admin_staff" on subscription_lines for all using (app_current_role() in ('admin','staff'));
 
 create policy "subscription_lines_select_own" on subscription_lines
   for select using (
@@ -117,7 +115,7 @@ create policy "subscription_lines_select_own" on subscription_lines
 -- ============================================================
 -- invoices
 -- ============================================================
-create policy "invoices_all_admin_staff" on invoices for all using (current_role() in ('admin','staff'));
+create policy "invoices_all_admin_staff" on invoices for all using (app_current_role() in ('admin','staff'));
 
 create policy "invoices_select_own" on invoices
   for select using (
@@ -129,7 +127,7 @@ create policy "invoices_select_own" on invoices
 -- ============================================================
 -- invoice_lines
 -- ============================================================
-create policy "invoice_lines_all_admin_staff" on invoice_lines for all using (current_role() in ('admin','staff'));
+create policy "invoice_lines_all_admin_staff" on invoice_lines for all using (app_current_role() in ('admin','staff'));
 
 create policy "invoice_lines_select_own" on invoice_lines
   for select using (
@@ -143,7 +141,7 @@ create policy "invoice_lines_select_own" on invoice_lines
 -- ============================================================
 -- payments
 -- ============================================================
-create policy "payments_all_admin_staff" on payments for all using (current_role() in ('admin','staff'));
+create policy "payments_all_admin_staff" on payments for all using (app_current_role() in ('admin','staff'));
 
 create policy "payments_select_own" on payments
   for select using (
@@ -155,7 +153,7 @@ create policy "payments_select_own" on payments
   );
 
 -- ============================================================
--- Trigger for paid status on payments
+-- Trigger: auto-update invoice paid status when payment recorded
 -- ============================================================
 create or replace function update_invoice_paid_status()
 returns trigger as $$
@@ -180,7 +178,11 @@ begin
 end;
 $$ language plpgsql;
 
-create trigger trg_update_invoice_paid
-after insert on payments
-for each row
-execute function update_invoice_paid_status();
+do $$
+begin
+  drop trigger if exists trg_update_invoice_paid on payments;
+  create trigger trg_update_invoice_paid
+  after insert on payments
+  for each row
+  execute function update_invoice_paid_status();
+end $$;
